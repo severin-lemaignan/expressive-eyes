@@ -6,6 +6,22 @@ from pathlib import Path
 
 import pycozmo
 
+class Face:
+    def __init__():
+        # set here default parameters
+
+    def render():
+        face = pycozmo.procedural_face.ProceduralFace(left_eye=#...,
+                                               right_eye=#...)
+        return face.render().convert('RGB')
+
+
+class AngryFace(Face):
+
+    def __init__():
+        # pre-define parameters for an angry
+        
+
 
 def main():
     # Render a 128x64 procedural face with default parameters.
