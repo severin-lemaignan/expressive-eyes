@@ -30,50 +30,22 @@ def main():
                                                            0.5, 0.5, 0.5, 0.0, .5, 0.0, 0.0, 0.0],
                                                  right_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
                                                             0.5, 0.5, 0.5, 0.0, .5, 0.0, 0.0, 0.0])
-    im1 = start.render()
-    im1.show()
-    im2 = end1.render()
-    im2.show()
-    im3 = end2.render()
-    im3.show()
-    im4 = end3.render()
-    im4.show()
-    im5 = end4.render()
-    im5.show()
-    im = end.render()
-    im.show()
-    im = im.convert("RGB")
-    im1 = im1.convert("RGB")
-    im2 = im2.convert("RGB")
-    im3 = im3.convert("RGB")
-    im4 = im4.convert("RGB")
-    im5 = im5.convert("RGB")
-    im15 = PIL.Image.blend(im2, im3, 0.5)
-    im05 = PIL.Image.blend(im1, im2, 0.5)
-    im25 = PIL.Image.blend(im3, im4, 0.5)
-    im35 = PIL.Image.blend(im4, im5, 0.5)
-    im45 = PIL.Image.blend(im5, im, 0.5)
-    im05.show()
-    im15.show()
-    im25.show()
-    im35.show()
-    im45.show()
+    
+    frames = []
 
-    print(type(im))
+    frames.append(start.render().convert('RGB'))
+    frames.append(end1.render().convert('RGB'))
+    frames.append(end2.render().convert('RGB'))
+    frames.append(end3.render().convert('RGB'))
+    frames.append(end4.render().convert('RGB'))
+    frames.append(end.render().convert('RGB'))
+
+    frames[0].save('out.gif', save_all=True, append_images=frames[1:])
 
 
 if __name__ == '__main__':
     main()
 
-image_path = Path('/home/catherine/Downloads/pycozmo-master/source_images/Blinking')
-images = list(image_path.glob('*.png'))
-
-image_list = []
-
-for file_name in images:
-    image_list.append(imageio.imread(file_name))
-
-imageio.mimwrite('animated_from_images.gif', image_list, fps=1)
 #  center_x: int = 0, center_y: int = 0,
 #  scale_x: float = 1.0, scale_y: float = 1.0,
 #  angle: float = 0.0,
