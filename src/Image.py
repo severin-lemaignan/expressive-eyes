@@ -8,9 +8,23 @@ from scipy import interpolate
 import numpy as np
 import matplotlib.pyplot as plt
 
+CENTER_X = (0, 0., 1.)
+CENTER_Y = (1, 0., 360.)
+...
+
+DEFAULT_EYE = {
+        CENTER_X: 0,
+        SCALE_X: 1.0,
+        ...
+        }
 
 class Face:
-    def __init__(self):
+    def __init__(self, eye_parameters):
+
+        self.eye = DEFAULT_EYE
+        for k, v in eye_parameters.items():
+            self.eye[k] = v
+
 
         self.center_x = 0; self.center_y = 0
         self.scale_x = 1.0; self.scale_y = 1.0
@@ -41,6 +55,22 @@ class Face:
         # self.left = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         # self.right = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
+    def interpolate(face, alpha):
+
+        interpolated_face = Face()
+
+        for k in self.eye:
+        
+
+            x = [0, 1]
+            y = [ self.eye[k], face[k] ]
+            f = interpolate.interp1d(x, y)
+
+            interpolated_face[k] = f(alpha)
+
+        return interpolated_face
+   
+
     def render(self):
         face = pycozmo.procedural_face.ProceduralFace(left_eye=self.left, right_eye=self.right)
         return face.render().convert('RGB')
@@ -48,7 +78,11 @@ class Face:
 
 class AngryFace(Face):
     def __init__(self, upper_lid_y, upper_lid_angle):
-        super().__init__()
+        super().__init__({
+                            UPPER_LID_Y: upper_lid_y, 
+                            UPPER_LID_ANGLE: upper_lid_angle
+                        })
+
         # pre-define parameters for an angry face
         self.upper_lid_y = upper_lid_y
         self.upper_lid_angle = upper_lid_angle
@@ -83,6 +117,20 @@ def main():
     end1 = pycozmo.procedural_face.ProceduralFace()
     # im1 = end1.render()
     im1.show()
+
+
+    happy_face = HappyFace()
+    sad_face = SadFace()
+
+    for i in range(20):
+        inbetween = happy_face.interpolate(sad_face, 1./i)
+        im = inbetween.render()
+        im.show()
+
+
+    #interpolating_face = happy_face.interpolate(sad_face)
+
+    #face = interpolating_face(alpha)
 
 
 # frames = [face2, face1]
