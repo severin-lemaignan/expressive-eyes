@@ -3,74 +3,98 @@ import imageio
 import PIL
 from PIL import Image
 from pathlib import Path
-
 import pycozmo
 
-class Face:
-    def __init__():
-        # set here default parameters
 
-    def render():
-        face = pycozmo.procedural_face.ProceduralFace(left_eye=#...,
-                                               right_eye=#...)
+class Face:
+    def __init__(self, center_x, center_y, scale_x, scale_y, angle,
+                 lower_inner_radius_x, lower_inner_radius_y,
+                 lower_outer_radius_x, lower_outer_radius_y,
+                 upper_inner_radius_x, upper_inner_radius_y,
+                 upper_outer_radius_x, upper_outer_radius_y,
+                 upper_lid_y, upper_lid_angle, upper_lid_bend,
+                 lower_lid_y, lower_lid_angle, lower_lid_bend):
+
+        #  self.center_x = 0; self.center_y = 0
+        #  self.scale_x = 1.0; self.scale_y = 1.0
+        #  self.angle = 0.0
+        #  self.lower_inner_radius_x = 0.5; self.lower_inner_radius_y = 0.5
+        #  self.lower_outer_radius_x = 0.5; self.lower_outer_radius_y = 0.5
+        #  self.upper_inner_radius_x = 0.5; self.upper_inner_radius_y = 0.5
+        #  self.upper_outer_radius_x = 0.5; self.upper_outer_radius_y = 0.5
+        #  self.upper_lid_y = 0.0; self.upper_lid_angle = 0.0; self.upper_lid_bend = 0.0
+        #  self.lower_lid_y = 0.0; self.lower_lid_angle = 0.0; self.lower_lid_bend = 0.0
+
+        self.center_x = center_x; self.center_y = center_y
+        self.scale_x = scale_x; self.scale_y = scale_y
+        self.angle = angle
+        self.lower_inner_radius_x = lower_inner_radius_x; self.lower_inner_radius_y = lower_inner_radius_y
+        self.lower_outer_radius_x = lower_outer_radius_x; self.lower_outer_radius_y = lower_outer_radius_y
+        self.upper_inner_radius_x = upper_inner_radius_x; self.upper_inner_radius_y = upper_inner_radius_y
+        self.upper_outer_radius_x = upper_outer_radius_x; self.upper_outer_radius_y = upper_outer_radius_y
+        self.upper_lid_y = upper_lid_y; self.upper_lid_angle = upper_lid_angle; self.upper_lid_bend = upper_lid_bend
+        self.lower_lid_y = lower_lid_y; self.lower_lid_angle = lower_lid_angle; self.lower_lid_bend = lower_lid_bend
+
+        self.left = [self.center_x, self.center_y, self.scale_x, self.scale_y, self.angle,
+                     self.lower_inner_radius_x, self.lower_inner_radius_y,
+                     self.lower_outer_radius_x, self.lower_outer_radius_y,
+                     self.upper_inner_radius_x, self.upper_inner_radius_y,
+                     self.upper_outer_radius_x, self.upper_outer_radius_y,
+                     self.upper_lid_y, -self.upper_lid_angle, self.upper_lid_bend,
+                     self.lower_lid_y, self.lower_lid_angle, self.lower_lid_bend]
+
+        self.right = [self.center_x, self.center_y, self.scale_x, self.scale_y, self.angle,
+                      self.lower_inner_radius_x, self.lower_inner_radius_y,
+                      self.lower_outer_radius_x, self.lower_outer_radius_y,
+                      self.upper_inner_radius_x, self.upper_inner_radius_y,
+                      self.upper_outer_radius_x, self.upper_outer_radius_y,
+                      self.upper_lid_y, self.upper_lid_angle, self.upper_lid_bend,
+                      self.lower_lid_y, self.lower_lid_angle, self.lower_lid_bend]
+
+        # self.left = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        # self.right = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    def render(self):
+        face = pycozmo.procedural_face.ProceduralFace(left_eye=self.left, right_eye=self.right)
         return face.render().convert('RGB')
 
 
 class AngryFace(Face):
+    def __init__(self, upper_lid_y, upper_lid_angle):
+        super().__init__(self, center_x, center_y, scale_x, scale_y, angle, lower_inner_radius_x, lower_inner_radius_y,
+                 lower_outer_radius_x, lower_outer_radius_y, upper_inner_radius_x, upper_inner_radius_y,
+                 upper_outer_radius_x, upper_outer_radius_y, upper_lid_y, upper_lid_angle, upper_lid_bend,
+                 lower_lid_y, lower_lid_angle, lower_lid_bend)
+        # pre-define parameters for an angry face
+        self.upper_lid_y = upper_lid_y
+        self.upper_lid_angle = upper_lid_angle
 
-    def __init__():
-        # pre-define parameters for an angry
-        
+        # self.left = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -30.0, 0.0, 0.0, 0.0, 0.0]
+        # self.right = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 30.0, 0.0, 0.0, 0.0, 0.0]
+
+
+#  class SadFace(Face):
+#    def __init__(self):
+#        super().__init__()
+#        self.left = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.6, 20.0, 0.0, 0.0, 0.0, 0.0]
+#        self.right = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.6, -20.0, 0.0, 0.0, 0.0, 0.0]
+
+
+face2 = Face(0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+#  face3 = SadFace()
+face1 = AngryFace(0.5, 30.0)
 
 
 def main():
-    # Render a 128x64 procedural face with default parameters.
-    start = pycozmo.procedural_face.ProceduralFace()
-    end1 = pycozmo.procedural_face.ProceduralFace(left_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                            0.5, 0.5, 0.1, 0.0, 0.1, 0.0, 0.0, 0.0],
-                                                  right_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                             0.5, 0.5, 0.1, 0.0, 0.1, 0.0, 0.0, 0.0])
-    end2 = pycozmo.procedural_face.ProceduralFace(left_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                            0.5, 0.5, 0.2, 0.0, .2, 0.0, 0.0, 0.0],
-                                                  right_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                             0.5, 0.5, 0.2, 0.0, .2, 0.0, 0.0, 0.0])
-    end3 = pycozmo.procedural_face.ProceduralFace(left_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                            0.5, 0.5, 0.3, 0.0, .3, 0.0, 0.0, 0.0],
-                                                  right_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                             0.5, 0.5, 0.3, 0.0, .3, 0.0, 0.0, 0.0])
-    end4 = pycozmo.procedural_face.ProceduralFace(left_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                            0.5, 0.5, 0.4, 0.0, .4, 0.0, 0.0, 0.0],
-                                                  right_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                             0.5, 0.5, 0.4, 0.0, .4, 0.0, 0.0, 0.0])
-    end = pycozmo.procedural_face.ProceduralFace(left_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                           0.5, 0.5, 0.5, 0.0, .5, 0.0, 0.0, 0.0],
-                                                 right_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                                                            0.5, 0.5, 0.5, 0.0, .5, 0.0, 0.0, 0.0])
-    
-    frames = []
+    im1 = face1.render()
+    end1 = pycozmo.procedural_face.ProceduralFace()
+    # im1 = end1.render()
+    im1.show()
 
-    frames.append(start.render().convert('RGB'))
-    frames.append(end1.render().convert('RGB'))
-    frames.append(end2.render().convert('RGB'))
-    frames.append(end3.render().convert('RGB'))
-    frames.append(end4.render().convert('RGB'))
-    frames.append(end.render().convert('RGB'))
 
-    frames[0].save('out.gif', save_all=True, append_images=frames[1:])
+# frames = [face2, face1]
+# frames[0].save('out.gif', save_all=True)
 
 
 if __name__ == '__main__':
     main()
-
-#  center_x: int = 0, center_y: int = 0,
-#  scale_x: float = 1.0, scale_y: float = 1.0,
-#  angle: float = 0.0,
-#  lower_inner_radius_x: float = 0.5, lower_inner_radius_y: float = 0.5,
-#  lower_outer_radius_x: float = 0.5, lower_outer_radius_y: float = 0.5,
-#  upper_inner_radius_x: float = 0.5, upper_inner_radius_y: float = 0.5,
-#  upper_outer_radius_x: float = 0.5, upper_outer_radius_y: float = 0.5,
-#  upper_lid_y: float = 0.0, upper_lid_angle: float = 0.0,
-#  upper_lid_bend: float = 0.0, lower_lid_y: float = 0.0,
-#  lower_lid_angle: float = 0.0, lower_lid_bend: float = 0.0):
-
-
