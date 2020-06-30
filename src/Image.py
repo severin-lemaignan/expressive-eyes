@@ -8,131 +8,151 @@ from scipy import interpolate
 import numpy as np
 import matplotlib.pyplot as plt
 
-CENTER_X = (0, 0., 1.)
-CENTER_Y = (1, 0., 360.)
-...
+DEFAULT_EYE = {"CENTER_X": 0, "CENTER_Y": 0,
+               "SCALE_X": 1.0, "SCALE_Y": 1.0,
+               "ANGLE": 0.0,
+               "LOWER_INNER_RADIUS_X": 0.5, "LOWER_INNER_RADIUS_Y": 0.5,
+               "LOWER_OUTER_RADIUS_X": 0.5, "LOWER_OUTER_RADIUS_Y": 0.5,
+               "UPPER_INNER_RADIUS_X": 0.5, "UPPER_INNER_RADIUS_Y": 0.5,
+               "UPPER_OUTER_RADIUS_X": 0.5, "UPPER_OUTER_RADIUS_Y": 0.5,
+               "UPPER_LID_Y": 0.0, "UPPER_LID_ANGLE": 0.0, "UPPER_LID_BEND": 0.0,
+               "LOWER_LID_Y": 0.0, "LOWER_LID_ANGLE": 0.0, "LOWER_LID_BEND": 0.0
+               }
 
-DEFAULT_EYE = {
-        CENTER_X: 0,
-        SCALE_X: 1.0,
-        ...
-        }
 
 class Face:
-    def __init__(self, eye_parameters):
+    """
+Function to produce the standard face.
 
-        self.eye = DEFAULT_EYE
-        for k, v in eye_parameters.items():
-            self.eye[k] = v
+CENTER_X = (0, -50, 50); CENTER_Y = (0, -50, 50)
+SCALE_X = (1.0, 1.0, 1.0); SCALE_Y = (1.0, 1.0, 1.0); ANGLE = (0.0, 0.0, 360.0)
 
+LOWER RADIUS:
 
-        self.center_x = 0; self.center_y = 0
-        self.scale_x = 1.0; self.scale_y = 1.0
-        self.angle = 0.0
-        self.lower_inner_radius_x = 0.5; self.lower_inner_radius_y = 0.5
-        self.lower_outer_radius_x = 0.5; self.lower_outer_radius_y = 0.5
-        self.upper_inner_radius_x = 0.5; self.upper_inner_radius_y = 0.5
-        self.upper_outer_radius_x = 0.5; self.upper_outer_radius_y = 0.5
-        self.upper_lid_y = 0.0; self.upper_lid_angle = 0.0; self.upper_lid_bend = 0.0
-        self.lower_lid_y = 0.0; self.lower_lid_angle = 0.0; self.lower_lid_bend = 0.0
+INNER_X = (0.5, 0.0, 1.0); INNER_Y = (0.5, 0.0, 0.6)
 
-        self.left = [self.center_x, self.center_y, self.scale_x, self.scale_y, self.angle,
-                     self.lower_inner_radius_x, self.lower_inner_radius_y,
-                     self.lower_outer_radius_x, self.lower_outer_radius_y,
-                     self.upper_inner_radius_x, self.upper_inner_radius_y,
-                     self.upper_outer_radius_x, self.upper_outer_radius_y,
-                     self.upper_lid_y, -self.upper_lid_angle, self.upper_lid_bend,
-                     self.lower_lid_y, self.lower_lid_angle, self.lower_lid_bend]
+OUTER_X = (0.5, 0.0, 1.0); OUTER_Y = (0.5, 0.0, 5.0)
 
-        self.right = [self.center_x, self.center_y, self.scale_x, self.scale_y, self.angle,
-                      self.lower_inner_radius_x, self.lower_inner_radius_y,
-                      self.lower_outer_radius_x, self.lower_outer_radius_y,
-                      self.upper_inner_radius_x, self.upper_inner_radius_y,
-                      self.upper_outer_radius_x, self.upper_outer_radius_y,
-                      self.upper_lid_y, self.upper_lid_angle, self.upper_lid_bend,
-                      self.lower_lid_y, self.lower_lid_angle, self.lower_lid_bend]
+UPPER RADIUS:
 
-        # self.left = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        # self.right = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+INNER_X = (0.5, 0.0, 1.0); INNER_Y = (0.5, 0.0, 0.6)
 
-    def interpolate(face, alpha):
+OUTER_X = (0.5, 0.0, 1.0); OUTER_Y = (0.5, 0.0, 5.0)
 
-        interpolated_face = Face()
+UPPER LID:
 
-        for k in self.eye:
-        
+Y = (0.0, 0.0, 1.0); ANGLE = (0.0, -60.0, 60.0); BEND = (0.0, 0.0, 1.0)
 
-            x = [0, 1]
-            y = [ self.eye[k], face[k] ]
-            f = interpolate.interp1d(x, y)
+LOWER LID:
 
-            interpolated_face[k] = f(alpha)
+Y = (0.0, 0.0, 1.0); ANGLE = (0.0, -60.0, 60.0); BEND = (0.0, 0.0, 1.0)
+    """
 
-        return interpolated_face
-   
+    def __init__(self, eye_parameters_left, eye_parameters_right):
+        master = []; def_items = []
+        for k, v in DEFAULT_EYE.items():
+            master.append(k)
+            def_items.append(v)
+
+        left_eye = def_items
+        right_eye = def_items
+
+        for s, d in eye_parameters_right.items():
+            right_eye[master.index(s)] = d
+
+        self.right = right_eye
+
+        for j, p in eye_parameters_left.items():
+            left_eye[master.index(j)] = p
+
+        self.left = left_eye
 
     def render(self):
         face = pycozmo.procedural_face.ProceduralFace(left_eye=self.left, right_eye=self.right)
         return face.render().convert('RGB')
 
 
-class AngryFace(Face):
+class interpolate(Face):
     def __init__(self, upper_lid_y, upper_lid_angle):
-        super().__init__({
-                            UPPER_LID_Y: upper_lid_y, 
-                            UPPER_LID_ANGLE: upper_lid_angle
-                        })
+        input_left = face()
+        input_right = face()
+        interpolated_left = self.left
+        interpolated_right = self.right
+        for k in self.left:
+            x = [0, alpha]
+            y = [self.left[k], face[k]]
+            f = interpolate.interp1d(x, y)
+            interpolated_left[k] = f(y)
+        for k in self.right:
+            x = [0, alpha]
+            y = [self.right[k], face[k]]
+            f = interpolate.interp1d(x, y)
+            interpolated_right[k] = f(y)
+        super().__init__(interpolated_left, interpolated_right)
 
-        # pre-define parameters for an angry face
-        self.upper_lid_y = upper_lid_y
-        self.upper_lid_angle = upper_lid_angle
+        # return interpolated_face
 
-        self.left = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -30.0, 0.0, 0.0, 0.0, 0.0]
-        self.right = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 30.0, 0.0, 0.0, 0.0, 0.0]
+
+class AngryFace(Face):
+    """
+    Function to produce an angry face.
+
+    Standard face is AngryFace(0.5, 30.0)
+
+    UPPER_LID_Y = (0.0, 0.0, 1.0); UPPER_LID_ANGLE = (0.0, -60.0, 60.0);
+    """
+
+    def __init__(self, upper_lid_y, upper_lid_angle):
+        super().__init__(
+            {
+                "UPPER_LID_Y": upper_lid_y,
+                "UPPER_LID_ANGLE": -upper_lid_angle  # Need to make this negative value work
+            },
+            {
+                "UPPER_LID_Y": upper_lid_y,
+                "UPPER_LID_ANGLE": upper_lid_angle
+            })
 
 
 class SadFace(Face):
-    def __init__(self):
-        super().__init__()
-        self.left = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.6, 20.0, 0.0, 0.0, 0.0, 0.0]
-        self.right = [0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.6, -20.0, 0.0, 0.0, 0.0, 0.0]
+    """
+    Function to produce a sad face.
+
+    Standard face is SadFace(0.6, -20.0)
+
+    UPPER_LID_Y = (0.0, 0.0, 1.0); UPPER_LID_ANGLE = (0.0, -60.0, 60.0);
+    """
+
+    def __init__(self, upper_lid_y, upper_lid_angle):
+        super().__init__(
+            {
+                "UPPER_LID_Y": upper_lid_y,
+                "UPPER_LID_ANGLE": -upper_lid_angle  # Need to make this negative value work
+            },
+            {
+                "UPPER_LID_Y": upper_lid_y,
+                "UPPER_LID_ANGLE": upper_lid_angle
+            })
 
 
-face2 = Face()
-#  face3 = SadFace()
-face1 = AngryFace(0.5, 30.0)
-
-x=np.arange(0.5, 30)
-y=x**3
-f = interpolate.interp1d(x, y)
-xnew=np.arange(0.5, 29.6, 0.1)
-ynew=f(xnew)
-
-plt.plot(x, y, 'o', xnew, ynew, '-')
-plt.show()
+face2 = AngryFace(0.5, 30.0)
 
 
 def main():
-    im1 = face1.render()
-    end1 = pycozmo.procedural_face.ProceduralFace()
-    # im1 = end1.render()
+    im1 = face2.render()
     im1.show()
 
 
-    happy_face = HappyFace()
-    sad_face = SadFace()
-
-    for i in range(20):
-        inbetween = happy_face.interpolate(sad_face, 1./i)
-        im = inbetween.render()
-        im.show()
-
-
-    #interpolating_face = happy_face.interpolate(sad_face)
-
-    #face = interpolating_face(alpha)
-
-
+# happy_face = HappyFace()
+# sad_face = SadFace()
+#
+# for i in range(20):
+#     inbetween = happy_face.interpolate(sad_face, 1./i)
+#     im = inbetween.render()
+#     im.show()
+#
+# interpolating_face = happy_face.interpolate(sad_face)
+# face = interpolating_face(alpha)
 # frames = [face2, face1]
 # frames[0].save('out.gif', save_all=True)
 
