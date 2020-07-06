@@ -155,8 +155,8 @@ class HappyFace(Face):
 
 
 def main():
-    face2 = HappyFace()
-    face1 = SadFace()
+#    face2 = HappyFace()
+#    face1 = SadFace()
 
 
     for alpha in np.arange(0,1,0.01):
@@ -166,6 +166,41 @@ def main():
         large = cv2.resize(cv_im, (0,0), fx=5, fy=5)
         cv2.imshow('image',large)
         cv2.waitKey(10)
+
+
+class FaceManager:
+    pass
+
+
+class ExpressiveEyes
+
+    def __init__():
+
+        self.facemanager = FaceManager()
+
+        camera.on_event(self.set_next_face)
+
+        self.run()
+
+    def run():
+        wait_time = 16 #ms
+
+        while True:
+
+            im = self.facemanager.get_next(delta = wait_time)
+
+            cv2.imshow('left',im_l)
+            cv2.imshow('right',im_r)
+            cv2.waitKey(wait_time)
+
+    def set_next_face(event):
+
+        if event == ...: # Angry user!
+            self.facemanager.next_target(AngryFace(), intensity = 9, transition_duration=4)
+
+        elif event == ...:
+            self.facemanager.next_target(HappyFace(), intensity = 5)
+
 
     # im = face1.render()
     # im1 = face2.render()
