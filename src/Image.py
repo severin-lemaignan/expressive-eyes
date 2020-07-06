@@ -8,6 +8,9 @@ from typing import Dict
 from scipy import interpolate
 import numpy as np
 import matplotlib.pyplot as plt
+import cv2
+
+import time
 
 DEFAULT_EYE = {"CENTER_X": 0, "CENTER_Y": 0,
                "SCALE_X": 1.0, "SCALE_Y": 1.0,
@@ -49,15 +52,12 @@ LOWER LID:
 Y = (0.0, 0.0, 1.0); ANGLE = (0.0, -60.0, 60.0); BEND = (0.0, 0.0, 1.0)
     """
 
-    def __init__(self, eye_parameters_left=Dict[str, any], eye_parameters_right=Dict[str, any]):
-        master = []; def_items_right = []; def_items_left = []  # Why can't we only hav one def_item?
-        for k, v in DEFAULT_EYE.items():
-            master.append(k)
-            def_items_right.append(v)
-            def_items_left.append(v)
+    def __init__(self, eye_parameters_left={}, eye_parameters_right={}):
 
-        self.left = def_items_left
-        self.right = def_items_right
+        master = list(DEFAULT_EYE.keys())
+
+        self.left = list(DEFAULT_EYE.values())
+        self.right = list(DEFAULT_EYE.values())
 
         for s, d in eye_parameters_right.items():
             self.right[master.index(s)] = d
@@ -83,9 +83,10 @@ Y = (0.0, 0.0, 1.0); ANGLE = (0.0, -60.0, 60.0); BEND = (0.0, 0.0, 1.0)
             h = interpolate.interp1d(x, y)
             interpolated_right.append(float(h(alpha)))
 
-        self.left = interpolated_left
-        self.right = interpolated_right
-        return self.left, self.right
+        result = Face()
+        result.left = interpolated_left
+        result.right = interpolated_right
+        return result
 
 
 class AngryFace(Face):
@@ -154,9 +155,18 @@ class HappyFace(Face):
 
 
 def main():
-    # face2 = HappyFace()
-    # face1 = SadFace()
-    # face3 = face2.interpolateface(face1, 0.5)
+    face2 = HappyFace()
+    face1 = SadFace()
+
+
+    for alpha in np.arange(0,1,0.01):
+        face3 = face2.interpolateface(face1, alpha)
+        im = face3.render()
+        cv_im = np.array(im)
+        large = cv2.resize(cv_im, (0,0), fx=5, fy=5)
+        cv2.imshow('image',large)
+        cv2.waitKey(10)
+
     # im = face1.render()
     # im1 = face2.render()
     # im2 = Face.render(face3)
