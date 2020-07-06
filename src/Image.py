@@ -4,6 +4,7 @@ import PIL
 from PIL import Image
 from pathlib import Path
 import pycozmo
+from typing import Dict
 from scipy import interpolate
 import numpy as np
 import matplotlib.pyplot as plt
@@ -48,65 +49,58 @@ LOWER LID:
 Y = (0.0, 0.0, 1.0); ANGLE = (0.0, -60.0, 60.0); BEND = (0.0, 0.0, 1.0)
     """
 
-    def __init__(self, eye_parameters_left, eye_parameters_right):
-        master = []; def_items = []
+    def __init__(self, eye_parameters_left=Dict[str, any], eye_parameters_right=Dict[str, any]):
+        master = []; def_items_right = []; def_items_left = []  # Why can't we only hav one def_item?
         for k, v in DEFAULT_EYE.items():
             master.append(k)
-            def_items.append(v)
+            def_items_right.append(v)
+            def_items_left.append(v)
 
-        left_eye = def_items
-        right_eye = def_items
+        self.left = def_items_left
+        self.right = def_items_right
 
         for s, d in eye_parameters_right.items():
-            right_eye[master.index(s)] = d
-
-        self.right = right_eye
+            self.right[master.index(s)] = d
 
         for j, p in eye_parameters_left.items():
-            left_eye[master.index(j)] = p
-
-        self.left = left_eye
+            self.left[master.index(j)] = p
 
     def render(self):
         face = pycozmo.procedural_face.ProceduralFace(left_eye=self.left, right_eye=self.right)
         return face.render().convert('RGB')
 
+    def interpolateface(self, face, alpha):
+        interpolated_left = []
+        interpolated_right = []
+        for k in range(0, len(self.left)):
+            x = [0, 1]
+            y = [self.left[k], face.left[k]]
+            g = interpolate.interp1d(x, y)
+            interpolated_left.append(float(g(alpha)))
+        for k in range(0, len(self.right)):
+            x = [0, 1]
+            y = [self.right[k], face.right[k]]
+            h = interpolate.interp1d(x, y)
+            interpolated_right.append(float(h(alpha)))
 
-class interpolate(Face):
-    def __init__(self, upper_lid_y, upper_lid_angle):
-        input_left = face()
-        input_right = face()
-        interpolated_left = self.left
-        interpolated_right = self.right
-        for k in self.left:
-            x = [0, alpha]
-            y = [self.left[k], face[k]]
-            f = interpolate.interp1d(x, y)
-            interpolated_left[k] = f(y)
-        for k in self.right:
-            x = [0, alpha]
-            y = [self.right[k], face[k]]
-            f = interpolate.interp1d(x, y)
-            interpolated_right[k] = f(y)
-        super().__init__(interpolated_left, interpolated_right)
-
-        # return interpolated_face
+        self.left = interpolated_left
+        self.right = interpolated_right
+        return self.left, self.right
 
 
 class AngryFace(Face):
     """
     Function to produce an angry face.
 
-    Standard face is AngryFace(0.5, 30.0)
+    Standard face is AngryFace(0.6, 30.0)
 
     UPPER_LID_Y = (0.0, 0.0, 1.0); UPPER_LID_ANGLE = (0.0, -60.0, 60.0);
     """
-
-    def __init__(self, upper_lid_y, upper_lid_angle):
+    def __init__(self, upper_lid_y=0.6, upper_lid_angle=30.0):
         super().__init__(
             {
                 "UPPER_LID_Y": upper_lid_y,
-                "UPPER_LID_ANGLE": -upper_lid_angle  # Need to make this negative value work
+                "UPPER_LID_ANGLE": -upper_lid_angle  # Does it matter if the type does agree with this?
             },
             {
                 "UPPER_LID_Y": upper_lid_y,
@@ -122,12 +116,11 @@ class SadFace(Face):
 
     UPPER_LID_Y = (0.0, 0.0, 1.0); UPPER_LID_ANGLE = (0.0, -60.0, 60.0);
     """
-
-    def __init__(self, upper_lid_y, upper_lid_angle):
+    def __init__(self, upper_lid_y=0.6, upper_lid_angle=-20.0):
         super().__init__(
             {
                 "UPPER_LID_Y": upper_lid_y,
-                "UPPER_LID_ANGLE": -upper_lid_angle  # Need to make this negative value work
+                "UPPER_LID_ANGLE": -upper_lid_angle
             },
             {
                 "UPPER_LID_Y": upper_lid_y,
@@ -135,14 +128,48 @@ class SadFace(Face):
             })
 
 
-face2 = AngryFace(0.5, 30.0)
+class HappyFace(Face):
+    """
+    Function to produce a happy face.
+
+    Standard face is HappyFace(1.0, 1.0, 0.4, 0.4)
+
+    UPPER_INNER_RADIUS_X = (0.5, 0.0, 1.0); UPPER_OUTER_X = (0.5, 0.0, 1.0);
+    LOWER LID_Y = (0.0, 0.0, 1.0); LOWER_LID_BEND = (0.0, 0.0, 1.0);
+    """
+    def __init__(self, upper_outer_radius_x=1.0, upper_inner_radius_x=1.0, lower_lid_y=0.4, lower_lid_bend=0.4):
+        super().__init__(
+            {
+                "UPPER_OUTER_RADIUS_X": upper_outer_radius_x,
+                "UPPER_INNER_RADIUS_X": upper_inner_radius_x,
+                "LOWER_LID_Y": lower_lid_y,
+                "LOWER_LID_BEND": lower_lid_bend
+            },
+            {
+                "UPPER_OUTER_RADIUS_X": upper_outer_radius_x,
+                "UPPER_INNER_RADIUS_X": upper_inner_radius_x,
+                "LOWER_LID_Y": lower_lid_y,
+                "LOWER_LID_BEND": lower_lid_bend
+            })
 
 
 def main():
-    im1 = face2.render()
-    im1.show()
-
-
+    # face2 = HappyFace()
+    # face1 = SadFace()
+    # face3 = face2.interpolateface(face1, 0.5)
+    # im = face1.render()
+    # im1 = face2.render()
+    # im2 = Face.render(face3)
+    # im1.show()
+    # im.show()
+    # im2.show()
+    # # Annoyed
+    # test_face = pycozmo.procedural_face.ProceduralFace(left_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
+    #                                                              0.5, 0.5, 0.0, -30.0, 0.0, 0.3, -10.0, 0.0],
+    #                                                    right_eye=[0, 0, 1.0, 1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 1.0, 0.5,
+    #                                                               1.0, 0.5, 0.2, 30.0, 0.0, 0.4, 5.0, 0.0])
+    # im1 = test_face.render()
+    # im1.show()
 # happy_face = HappyFace()
 # sad_face = SadFace()
 #
