@@ -8,9 +8,12 @@ from scipy import interpolate
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-
+import tkinter
 import time
 
+root = tkinter.Tk()
+width = root.winfo_screenwidth()
+height = root.winfo_screenheight()
 DEFAULT_EYE = {"CENTER_X": 0, "CENTER_Y": 0,
                "SCALE_X": 1.0, "SCALE_Y": 1.0,
                "ANGLE": 0.0,
@@ -560,108 +563,170 @@ class ExcitedFace(Face):
     pass
 
 
-class FaceManager:
-    pass
-
-    def next_target(self, face, intensity, valence):
-        pass
-
-
-class ExpressiveEyes:
-
-    def __init__(self):
-
-        self.face_manager = FaceManager()
-
-        camera.on_event(self)
-        self.run()
+class BlinkLow(Face):
+    """
+    Function to produce a low blink.
+    """
+    def __init__(self, upper_lid_y=1.1):
+        super().__init__(
+            {
+                "UPPER_LID_Y": upper_lid_y,
+            },
+            {
+                "UPPER_LID_Y": upper_lid_y,
+            })
 
 
-    def run(self):
+class BlinkHigh(Face):
+    """
+    Function to produce a high blink.
+    """
+    def __init__(self, center_y=-50, upper_lid_y=0.6, lower_lid_y=0.6):
+        super().__init__(
+            {
+                "CENTER_Y": center_y,
+                "UPPER_LID_Y": upper_lid_y,
+                "LOWER_LID_Y": lower_lid_y
+            },
+            {
+                "CENTER_Y": center_y,
+                "UPPER_LID_Y": upper_lid_y,
+                "LOWER_LID_Y": lower_lid_y
+            })
 
-        wait_time = 16 #ms
-        try:
-            while True:
-                im = self.facemanager.get_next(delta = wait_time)
-                cv2.imshow('left',im_l)
-                cv2.imshow('right',im_r)
-                cv2.waitKey(wait_time)
-                camera.on_event(self.set_next_face(event))
-        except KeyboardInterrupt:
-            exit()
+
+class BlinkMed(Face):
+    """
+    Function to produce a middle blink.
+    """
+    def __init__(self, upper_lid_y=0.6, lower_lid_y=0.6):
+        super().__init__(
+            {
+                "UPPER_LID_Y": upper_lid_y,
+                "LOWER_LID_Y": lower_lid_y
+            },
+            {
+                "UPPER_LID_Y": upper_lid_y,
+                "LOWER_LID_Y": lower_lid_y
+            })
 
 
-    def set_next_face(self, event):
+def interpolation(prior_face, next_face, alpha):
+        temp_face = prior_face.interpolateface(next_face, alpha)
+        face_render = np.array(temp_face.render())
+        large = cv2.resize(face_render, (width, height), interpolation=cv2.INTER_NEAREST)
+        return cv2.imshow("Face", large)
 
-        face_type = {
-            0: NeutralFace(),
-            # High arousal high valence
-            1: HappyFace(),
-            2: AmazedFace(),
-            3: ExcitedFace(),
-            # High arousal low valence
-            4: AngryFace(),
-            5: SurprisedFace(),
-            6: FearFace(),
-            7: DespairFace(),
-            8: DisappointedFace(),
-            9: EmbarrassedFace(),
-            10: HorrifiedFace(),
-            11: AnnoyedFace(),
-            12: FuriousFace(),
-            # Med arousal low valence
-            13: DisgustFace(),
-            14: PleadingFace(),
-            15: GuiltyFace(),
-            16: SkepticalFace(),
-            17: SuspiciousFace(),
-            18: ConfusedFace(),
-            # Low arousal low valence
-            19: SadFace(),
-            20: VulnerableFace(),
-            21: RejectedFace(),
-            22: BoredFace(),
-            23: TiredFace(),
-            24: AsleepFace()
 
-        }
-        intensity = {
-            "high": 3,
-            "med": 4,
-            "low": 5
-        }
-        valence = {
-            "high": 3,
-            "low": 5
-        }
+def get_next_frame(prior_face, interpolation_speed, event):
 
-        if event == 0:
-            self.face_manager.next_target(face_type[event], intensity["high"], valence["high"])
-        elif event in range(1, 4):
-            self.face_manager.next_target(face_type[event], intensity["high"], valence["high"])
-        elif event in range(4, 13):
-            self.face_manager.next_target(face_type[event], intensity["high"], valence["low"])
-        elif event in range(13, 19):
-            self.face_manager.next_target(face_type[event], intensity["med"], valence["low"])
-        elif event in range(19, 25):
-            self.face_manager.next_target(face_type[event], intensity["low"], valence["low"])
-        else:
-            pass # Error
+    int_speed = {
+        0: 0.1,  # NeutralFace(),
+        1: 0.1,  # HappyFace(),
+        2: 0.1,  # AmazedFace(),
+        3: 0.1,  # ExcitedFace(),
+        4: 0.1,  # AngryFace(),
+        5: 0.1,  # SurprisedFace(),
+        6: 0.1,  # FearFace(),
+        7: 0.1,  # DespairFace(),
+        8: 0.1,  # DisappointedFace(),
+        9: 0.1,  # EmbarrassedFace(),
+        10: 0.1,  # HorrifiedFace(),
+        11: 0.1,  # AnnoyedFace(),
+        12: 0.1,  # FuriousFace(),
+        13: 0.1,  # DisgustFace(),
+        14: 0.1,  # PleadingFace(),
+        15: 0.1,  # GuiltyFace(),
+        16: 0.1,  # SkepticalFace(),
+        17: 0.1,  # SuspiciousFace(),
+        18: 0.1,  # ConfusedFace(),
+        19: 0.1,  # SadFace(),
+        20: 0.1,  # VulnerableFace(),
+        21: 0.1,  # RejectedFace(),
+        22: 0.1,  # BoredFace(),
+        23: 0.1,  # TiredFace(),
+        24: 0.1  # AsleepFace()
+    }
+    blink_height = {
+        0: BlinkMed(),  # NeutralFace(),
+        1: BlinkMed(),  # HappyFace(),
+        2: BlinkMed(),  # AmazedFace(),
+        3: BlinkMed(),  # ExcitedFace(),
+        4: BlinkMed(),  # AngryFace(),
+        5: BlinkMed(),  # SurprisedFace(),
+        6: BlinkMed(),  # FearFace(),
+        7: BlinkMed(),  # DespairFace(),
+        8: BlinkMed(),  # DisappointedFace(),
+        9: BlinkMed(),  # EmbarrassedFace(),
+        10: BlinkMed(),  # HorrifiedFace(),
+        11: BlinkMed(),  # AnnoyedFace(),
+        12: BlinkMed(),  # FuriousFace(),
+        13: BlinkMed(),  # DisgustFace(),
+        14: BlinkMed(),  # PleadingFace(),
+        15: BlinkMed(),  # GuiltyFace(),
+        16: BlinkMed(),  # SkepticalFace(),
+        17: BlinkMed(),  # SuspiciousFace(),
+        18: BlinkMed(),  # ConfusedFace(),
+        19: BlinkMed(),  # SadFace(),
+        20: BlinkMed(),  # VulnerableFace(),
+        21: BlinkMed(),  # RejectedFace(),
+        22: BlinkMed(),  # BoredFace(),
+        23: BlinkMed(),  # TiredFace(),
+        24: None  # AsleepFace()
+    }
+    face_type = {
+        0: NeutralFace(),
+        # High arousal high valence
+        1: HappyFace(),
+        2: AmazedFace(),
+        3: ExcitedFace(),
+        # High arousal low valence
+        4: AngryFace(),
+        5: SurprisedFace(),
+        6: FearFace(),
+        7: DespairFace(),
+        8: DisappointedFace(),
+        9: EmbarrassedFace(),
+        10: HorrifiedFace(),
+        11: AnnoyedFace(),
+        12: FuriousFace(),
+        # Med arousal low valence
+        13: DisgustFace(),
+        14: PleadingFace(),
+        15: GuiltyFace(),
+        16: SkepticalFace(),
+        17: SuspiciousFace(),
+        18: ConfusedFace(),
+        # Low arousal low valence
+        19: SadFace(),
+        20: VulnerableFace(),
+        21: RejectedFace(),
+        22: BoredFace(),
+        23: TiredFace(),
+        24: AsleepFace()
+
+    }
+
+    next_face = face_type[event]
+    for alpha in np.arange(0, 1, interpolation_speed):
+        interpolation(prior_face, next_face, alpha)
+        cv2.waitKey(100)
+    interpolation_speed = int_speed[event]
+    blink_height = blink_height[event]
+
+    return next_face, interpolation_speed, blink_height
 
 
 def main():
-    test_face1 = FearFace()
-    im1 = test_face1.render()
-    im1.show()
     face2 = NeutralFace()
-    face1 = SadFace()
+    face1 = BlinkHigh()
     for alpha in np.arange(0, 1, 0.1):
         face3 = face2.interpolateface(face1, alpha)
-        face3 = test_face1
         dst = cv2.medianBlur(np.array(face3.render()),5)
-        large = cv2.resize(dst, (0, 0), fx=10, fy=10, interpolation=cv2.INTER_NEAREST)
-        cv2.imshow("image", cv2.blur(large,(15,15)))
-        cv2.waitKey(10)
+        large = cv2.resize(dst, (width, height), interpolation=cv2.INTER_NEAREST)
+        cv2.imshow("image", large)
+        cv2.waitKey(100)
+
 
 
 if __name__ == '__main__':
