@@ -9,9 +9,10 @@ from scipy import interpolate
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-
-
 import time
+
+# All cv2.waitkey codes taken from http://www.asciitable.com/
+
 # Perplexed/Skeptical
 test_face = pycozmo.procedural_face.ProceduralFace(
         left_eye=[0, 0,
@@ -165,3 +166,54 @@ if __name__ == '__main__':
         #     self.facemanager.next_target(AmazedFace(), intensity = 5, transition_duration=4)
         # elif event == 28: # Excited - high arousal high valence
         #     self.facemanager.next_target(ExcitedFace(), intensity = 5, transition_duration=4)
+
+    # if key == 97: # a
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 1)
+    # elif key == 98: # b
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 2)
+    # elif key == 99: # c
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 3)
+    # elif key == 100: # d
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 4)
+    # elif key == 101: # e
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 5)
+    # elif key == 102: # f
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 6)
+    # elif key == 103: # g
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 7)
+    # elif key == 104: # h
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 8)
+    # elif key == 105: # i
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 9)
+    # elif key == 106: # j
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 10)
+    # elif key == 107: # k
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 11)
+    # elif key == 108: # l
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 12)
+    # elif key == 109: # m
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 13)
+    # elif key == 110: # n
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 14)
+    # elif key == 111: # o
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 15)
+    # elif key == 112: # p
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 16)
+    # elif key == 113: # q
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 17)
+    # elif key == 114: # r
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 18)
+    # elif key == 115: # s
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 19)
+    # elif key == 116: # t
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 20)
+    # elif key == 117: # u
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 21)
+    # elif key == 118: # v
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 22)
+    # elif key == 119: # w
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 23)
+    # elif key == 120: # x
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 24)
+    # elif key == 121: # y
+    #     Next_Face, int_speed, blink_height = eyes.get_next_frame(Prior_Face, int_speed, 0)
