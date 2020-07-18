@@ -1,15 +1,4 @@
-#!/usr/bin/env python
-from Image import *
-import imageio
-import PIL
-from PIL import Image
-from pathlib import Path
-import pycozmo
-from scipy import interpolate
-import numpy as np
-import matplotlib.pyplot as plt
-import cv2
-import time
+from expressive_eyes import *
 
 # All cv2.waitkey codes taken from http://www.asciitable.com/
 
