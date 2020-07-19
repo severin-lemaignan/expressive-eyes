@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from expressive_eyes import *
 
 key_event={
@@ -29,49 +28,33 @@ key_event={
     121: 0
 }
 
-delta = 16 # 16 ms
+delta = 6000 # 6 s blinking time
 Next_Face = NeutralFace()
-int_speed = 0.1
+int_speed = 70
+blink_pos = BlinkMed()
 
-for alpha in np.arange(0, 1, int_speed):  # On startup
+for alpha in np.arange(0, 1, 0.1):  # On startup
     interpolation(BlinkMed(), NeutralFace(), alpha)
-    cv2.waitKey(100)
+    cv2.waitKey(int_speed)
+
+cv2.waitKey(4000)
 
 while True:
     Prior_Face = Next_Face
-    key = cv2.waitKey(delta) # sleeps 16ms
 
-    if key in range(97,122):  # a to y
-        Next_Face, int_speed, blink_height = get_next_frame(Prior_Face, int_speed, key_event[key])
+    for alpha in np.arange(0, 1, 0.1):  # Blink down
+        interpolation(Next_Face, blink_pos, alpha)
+        cv2.waitKey(int_speed)
+
+    for alpha in np.arange(0, 1, 0.1):  # Blink up
+        interpolation(blink_pos, Next_Face, alpha)
+        cv2.waitKey(int_speed)
+
+    key = cv2.waitKey(delta)
+
+    if key in range(97,122):  # a to y - all cv2.waitkey codes taken from http://www.asciitable.com/
+        Next_Face, int_speed, blink_pos, delta = get_next_frame(Prior_Face, 0.1, key_event[key])
+        cv2.waitKey(5000)
     elif key == 27:  # ESC
         cv2.destroyAllWindows()
         exit(0)
-=======
-
-import cv2
-
-import time
-
-from expressive_eyes import ExpressiveEyes
-
-
-eyes = ExpressiveEyes()
-
-
-delta = 0.016 # 16 ms
-
-while True:
-
-    l_eye, r_eye = eyes.get_next_frame(delta)
-
-    cv2.imshow("Left eye", l_eye)
-
-    key = cv2.waitKey(delta) # sleeps 16ms
-
-    if key == 32: # space
-        eyes.set_target("happy")
-        
-    
->>>>>>> fc1a3ff7b5358896edd811416a5d5e1670206bb6
-
-
