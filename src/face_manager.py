@@ -35,7 +35,7 @@ blink_pos = BlinkMed()
 
 for alpha in np.arange(0, 1, 0.1):  # On startup
     interpolation(BlinkMed(), NeutralFace(), alpha)
-    cv2.waitKey(int_speed)
+    cv2.waitKey(int_speed+20)
 
 cv2.waitKey(4000)
 

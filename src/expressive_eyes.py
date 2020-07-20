@@ -704,10 +704,10 @@ class BlinkMed(Face):
 
 
 def interpolation(prior_face, next_face, alpha):
-        temp_face = prior_face.interpolateface(next_face, alpha)
-        face_render = np.array(temp_face.render())
-        large = cv2.resize(face_render, (width, height), interpolation=cv2.INTER_NEAREST)
-        return cv2.imshow("Face", large)
+    temp_face = prior_face.interpolateface(next_face, alpha)
+    face_render = np.array(temp_face.render())
+    large = cv2.resize(face_render, (width, height), interpolation=cv2.INTER_NEAREST)
+    return cv2.imshow("Face", large)
 
 def get_next_frame(prior_face, interpolation_speed, event):
 
@@ -827,7 +827,7 @@ def get_next_frame(prior_face, interpolation_speed, event):
     next_face = face_type[event]
     for alpha in np.arange(0, 1, interpolation_speed):
         interpolation(prior_face, next_face, alpha)
-        cv2.waitKey(100)
+        cv2.waitKey(50)
     interpolation_speed = int_speed[event]
     blink_height = blink_height[event]
     blink_int_time = blink_int_time[event]
