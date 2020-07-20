@@ -58,3 +58,44 @@ while True:
     elif key == 27:  # ESC
         cv2.destroyAllWindows()
         exit(0)
+
+class FaceManager:
+
+    def __init__(self):
+
+        self.time = 0 # in ms
+
+        self.time_last_blink = 0
+        self.is_blinking = False
+
+        self.next_expression = None
+        self.next_expression_duration = 0
+        self.time_started_expression = 0
+        self.is_showing_expression = False
+
+    def get_next_frame(self, delta):
+
+        self.time += delta
+
+        if self.time - self.time_last_blink > 6000:
+            self.time_last_blink = self.time
+            self.is_blinking = True
+
+        if self.is_blinking:
+            blinking_time = self.time - self.time_last_blink
+            interpolateface(...)
+            ...
+
+        if self.next_expression is not None and not self.is_showing_expression:
+            self.time_started_expression = self.time
+            self.is_showing_expression = True
+
+        if self.is_showing_expression:
+            ...
+
+
+        
+    def show_expression(type, duration):
+        self.next_expression = type
+        self.next_expression_duration = duration
+
