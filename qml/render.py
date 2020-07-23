@@ -28,7 +28,7 @@ class FaceManager():
 
     def get_elapsed_time(self):
         now = time.time()
-        elapsed_time = self.last_render - now
+        elapsed_time = now - self.last_render
         self.last_render = now
 
         return elapsed_time
@@ -45,7 +45,7 @@ def render(image_id, requested_size):
         requested_size = (128, 64)
 
 
-    filename = os.path.join(os.path.dirname(__file__), image_id)
+    filename = os.path.join(os.path.dirname(__file__), img_name)
     img = Image.open(filename)
 
     img.thumbnail(requested_size, Image.ANTIALIAS)

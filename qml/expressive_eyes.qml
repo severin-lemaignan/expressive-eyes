@@ -28,7 +28,7 @@ ApplicationWindow {
                         addImportPath(Qt.resolvedUrl('.'));
 
                         importModule('render', function () {
-                            image.source = 'image://python/face.png';
+                            updateImageTimer.start()
                         });
                     }
 
