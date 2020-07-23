@@ -1,0 +1,11 @@
+[Desktop Entry]
+
+Type=Application
+
+X-Nemo-Application-Type=silica-qt5
+
+Name=Expressive Eyes
+
+Icon=expressive_eyes
+
+Exec=sailfish-qml expressive_eyes
