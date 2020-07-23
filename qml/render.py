@@ -18,11 +18,20 @@
 import pyotherside
 import os
 
+import time
+
 from PIL import Image
 
+last_render = time.time()
 
 def render(image_id, requested_size):
-    print('image_id: "{image_id}", size: {requested_size}'.format(**locals()))
+    
+    now = time.time()
+    elapsed_time = last_render - now
+    last_render = now
+
+    img_name, unique_token = image_id.split("?")
+    print('image_id: "{img_name}" (elapsed: {elapsed_time}s, token: {unique_token}), size: {requested_size}'.format(**locals()))
 
     # width and height will be -1 if not set in QML
     if requested_size == (-1, -1):
