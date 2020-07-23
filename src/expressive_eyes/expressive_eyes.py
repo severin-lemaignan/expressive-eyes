@@ -1,19 +1,12 @@
 #!/usr/bin/env python
-import imageio
 import PIL
 from PIL import Image
 from pathlib import Path
 import pycozmo
 from scipy import interpolate
 import numpy as np
-import matplotlib.pyplot as plt
-import cv2
-import tkinter
 import time
 
-root = tkinter.Tk()
-width = root.winfo_screenwidth()
-height = root.winfo_screenheight()
 
 DEFAULT_EYE = {"CENTER_X": 0, "CENTER_Y": 0,
                "SCALE_X": 1.0, "SCALE_Y": 1.0,
@@ -905,9 +898,15 @@ def display_all_faces():
                 cv2.destroyAllWindows()
                 exit(0)
 
-def main():
-    display_all_faces()
 
 
 if __name__ == '__main__':
-    main()
+    import imageio
+    import matplotlib.pyplot as plt
+    import cv2
+    import tkinter
+    root = tkinter.Tk()
+    width = root.winfo_screenwidth()
+    height = root.winfo_screenheight()
+
+    display_all_faces()
