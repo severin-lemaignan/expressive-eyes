@@ -37,6 +37,7 @@ ApplicationWindow {
                 Timer {
                     id: updateImageTimer
                     interval: 100
+                    repeat: true
                     onTriggered: image.source = 'image://python/face.png?' + Math.random()
                 }
             }
