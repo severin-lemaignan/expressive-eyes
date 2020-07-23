@@ -16,9 +16,9 @@
 #
 
 import pyotherside
+import os
 
 from PIL import Image
-from PIL import ImageDraw
 
 
 def render(image_id, requested_size):
@@ -26,7 +26,7 @@ def render(image_id, requested_size):
 
     # width and height will be -1 if not set in QML
     if requested_size == (-1, -1):
-        requested_size = (300, 300)
+        requested_size = (128, 64)
 
 
     filename = os.path.join(os.path.dirname(__file__), image_id)

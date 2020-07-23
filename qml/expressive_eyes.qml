@@ -1,10 +1,24 @@
 import QtQuick 2.0
+import Sailfish.Silica 1.0
 import io.thp.pyotherside 1.0
+
+ ApplicationWindow {
+     initialPage: Component {
+Page {
+    id: expressiveeyes
+    allowedOrientations: Orientation.LandscapeMask
+
+    Rectangle {
+        color: 'black'
+	anchors.fill: parent
+	}
 
 Image {
     id: image
-    width: 300
+    width: 600
     height: 300
+
+    anchors.centerIn: parent
 
     Python {
         Component.onCompleted: {
@@ -18,4 +32,7 @@ Image {
 
         onError: console.log('Python error: ' + traceback)
     }
+}
+}
+}
 }
