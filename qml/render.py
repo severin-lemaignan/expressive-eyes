@@ -22,13 +22,20 @@ import time
 
 from PIL import Image
 
-last_render = time.time()
+class FaceManager():
+    def __init__(self):
+        self.last_render = time.time()
+
+    def get_elapsed_time(self):
+        now = time.time()
+        elapsed_time = self.last_render - now
+        self.last_render = now
+
+        return elapsed_time
 
 def render(image_id, requested_size):
     
-    now = time.time()
-    elapsed_time = last_render - now
-    last_render = now
+    elapsed_time = facemanager.get_elapsed_time()
 
     img_name, unique_token = image_id.split("?")
     print('image_id: "{img_name}" (elapsed: {elapsed_time}s, token: {unique_token}), size: {requested_size}'.format(**locals()))
@@ -46,5 +53,7 @@ def render(image_id, requested_size):
     #b, g, r, a = img.split()
     #img = Image.merge("RGBA", (r, g, b, a))
     return bytearray(img.tobytes()), img.size, pyotherside.format_argb32
+
+facemanager = FaceManager()
 
 pyotherside.set_image_provider(render)
