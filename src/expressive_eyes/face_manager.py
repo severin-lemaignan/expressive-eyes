@@ -7,32 +7,32 @@ class FaceManager:
     def __init__(self, width=600, height=480):
 
         self.face_type = {
-            # Event: face, blink_height, blink_time, interpolation_speed, key_press
-            0: [NeutralFace(), BlinkMed(), 6000, 70, 121],
-            1: [HappyFace(), BlinkHigh(), 6000, 70, 97],
-            2: [AmazedFace(), BlinkMed(), 6000, 70, 98],
-            3: [ExcitedFace(), BlinkMed(), 6000, 70, 99],
-            4: [AngryFace(), BlinkLow(), 6000, 70, 100],
-            5: [SurprisedFace(), BlinkMed(), 6000, 70, 101],
-            6: [FearFace(), BlinkMed(), 6000, 70, 102],
-            7: [DespairFace(), BlinkLow(), 6000, 70, 103],
-            8: [DisappointedFace(), BlinkMed(), 6000, 70, 104],
-            9: [EmbarrassedFace(), BlinkLow(), 6000, 70, 105],
-            10: [HorrifiedFace(), BlinkMed(), 6000, 70, 106],
-            11: [AnnoyedFace(), BlinkMed(), 6000, 70, 107],
-            12: [FuriousFace(), BlinkMed(), 6000, 70, 108],
-            13: [DisgustFace(), BlinkMed(), 6000, 70, 109],
-            14: [PleadingFace(), BlinkMed(), 6000, 70, 110],
-            15: [GuiltyFace(), BlinkLow(), 6000, 70, 111],
-            16: [SkepticalFace(), BlinkLow(), 6000, 70, 112],
-            17: [SuspiciousFace(), BlinkMed(), 6000, 70, 113],
-            18: [ConfusedFace(),BlinkMed(), 6000, 70, 114],
-            19: [SadFace(), BlinkLow(), 6000, 70, 115],
-            20: [VulnerableFace(), BlinkMed(), 6000, 70, 116],
-            21: [RejectedFace(), BlinkLow(), 6000, 70, 117],
-            22: [BoredFace(), BlinkLow(), 6000, 70, 118],
-            23: [TiredFace(), BlinkLow(), 6000, 70, 119],
-            24: [AsleepFace(), BlinkMed(), 6000, 70, 120]
+            # Event: face, blink_height, blink_time, interpolation_speed
+            0: [NeutralFace(), BlinkMed(), 6000, 40],
+            1: [HappyFace(), BlinkHigh(), 6000, 40],
+            2: [AmazedFace(), BlinkMed(), 6000, 40],
+            3: [ExcitedFace(), BlinkMed(), 6000, 40],
+            4: [AngryFace(), BlinkLow(), 6000, 40],
+            5: [SurprisedFace(), BlinkMed(), 6000, 40],
+            6: [FearFace(), BlinkMed(), 6000, 40],
+            7: [DespairFace(), BlinkLow(), 6000, 40],
+            8: [DisappointedFace(), BlinkMed(), 6000, 40],
+            9: [EmbarrassedFace(), BlinkLow(), 6000, 40],
+            10: [HorrifiedFace(), BlinkMed(), 6000, 40],
+            11: [AnnoyedFace(), BlinkMed(), 6000, 40],
+            12: [FuriousFace(), BlinkMed(), 6000, 40],
+            13: [DisgustFace(), BlinkMed(), 6000, 40],
+            14: [PleadingFace(), BlinkMed(), 6000, 40],
+            15: [GuiltyFace(), BlinkLow(), 6000, 40],
+            16: [SkepticalFace(), BlinkLow(), 6000, 40],
+            17: [SuspiciousFace(), BlinkMed(), 6000, 40],
+            18: [ConfusedFace(),BlinkMed(), 6000, 40],
+            19: [SadFace(), BlinkLow(), 6000, 40],
+            20: [VulnerableFace(), BlinkMed(), 6000, 40],
+            21: [RejectedFace(), BlinkLow(), 6000, 40],
+            22: [BoredFace(), BlinkLow(), 6000, 40],
+            23: [TiredFace(), BlinkLow(), 6000, 40],
+            24: [AsleepFace(), BlinkMed(), 6000, 40]
         }
         self.face_name = {
             "Neutral": NeutralFace(),
@@ -69,71 +69,59 @@ class FaceManager:
 
         self.time_last_blink = 0
         self.is_blinking = False
+        self.startup = True
 
         self.next_expression = None
-        self.next_expression_duration = 0
-        self.time_started_expression = 0
         self.is_showing_expression = False
 
-        self.prior_face = NeutralFace()
+        self.prior_face, self.blink_height, self.blink_time, self.interpolation_speed = self.face_type[0]
+
         self.next_face = self.prior_face
-        self.blink_height = BlinkMed()
-        self.blink_time = 6000
-        self.interpolation_speed = 70
+        self.duration = 0
 
-    def get_next_frame(self, delta, event):
+    def get_next_frame(self, event, duration):
+        self.duration = duration
+        self.time += self.duration
+        print(self.time - self.time_last_blink)
 
-        self.time += delta
-        variables = self.face_type[event]
-        key = cv2.waitKey(100)
-
-        if key == 27:  # ESC
-            cv2.destroyAllWindows()
-            exit(0)
-
-        if self.time - self.time_last_blink > 6000:  # Blink if time since last blink > 6000ms
+        if self.startup:
+            print("Start up")
             for alpha in np.arange(0, 1, 0.1):
-                self.interpolation(self.next_face, self.blink_height, alpha)
-                cv2.waitKey(self.face_type[event[4]])
+                yield self.interpolation(self.blink_height, self.next_face, alpha)
+                cv2.waitKey(self.interpolation_speed)
+            self.startup = False
 
+        if self.time - self.time_last_blink > self.blink_time:  # Blink if time since last blink > self.blink_time (6000ms)
+            print("Blinking")
             for alpha in np.arange(0, 1, 0.1):
-                self.interpolation(self.blink_height, self.next_face, alpha)
-                cv2.waitKey(self.face_type[event[4]])
-
+                yield self.interpolation(self.next_face, self.blink_height, alpha)
+                cv2.waitKey(self.interpolation_speed)
+            for alpha in np.arange(0, 1, 0.1):
+                yield self.interpolation(self.blink_height, self.next_face, alpha)
+                cv2.waitKey(self.interpolation_speed)
             self.time_last_blink = self.time
-            self.is_blinking = True
-
-        if self.is_blinking:
-            self.blink_time = self.time - self.time_last_blink
 
         if self.next_expression is None:
-            variables = self.face_type[event]
-            self.next_face = variables[0]; self.blink_height = variables[1]
-            self.blink_time = variables[2]; self.interpolation_speed = variables[3]
             self.prior_face = self.next_face
+            self.next_face, self.blink_height, self.blink_time, self.interpolation_speed = self.face_type[event]
+            self.next_expression = not None
 
-        if self.next_expression is not None and not self.is_showing_expression:
+        if self.next_expression is not None:
+            print("Show expression")
             for alpha in np.arange(0, 1, 0.1):
-                self.interpolation(self.prior_face, self.next_face, alpha)
-                cv2.waitKey(self.face_type[event[4]])
-
-            self.time_started_expression = self.time
-            self.is_showing_expression = True
-
-        if self.is_showing_expression:
-            pass
-
-        return self.next_face
+                cv2.waitKey(self.interpolation_speed)
+                yield self.interpolation(self.prior_face, self.next_face, alpha)
+            self.next_expression = None
 
     def interpolation(self, prior_face, next_face, alpha):
         temp_face = prior_face.interpolateface(next_face, alpha)
         face_render = np.array(temp_face.render())
-        large = cv2.resize(face_render, (self.width, self.height), interpolation=cv2.INTER_NEAREST)
-        return cv2.imshow("Face", large)
+        resized_image = cv2.resize(face_render, (self.width, self.height), interpolation=cv2.INTER_NEAREST)
+        return resized_image
 
     def show_expression(self, face_str, duration):
         self.next_face = self.face_name[face_str]
-        self.next_expression_duration = duration
+        self.duration = duration
 
     def display_all_faces(self):
         face_render = []
