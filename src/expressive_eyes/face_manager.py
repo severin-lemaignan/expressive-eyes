@@ -79,26 +79,43 @@ class FaceManager:
         self.next_face = self.prior_face
         self.duration = 0
 
-    def get_next_frame(self, event, duration):
+    def get_next_frame(self, event, elapsed_time_since_last_call):
         self.duration = duration
         self.time += self.duration
         print(self.time - self.time_last_blink)
 
         if self.startup:
             print("Start up")
-            for alpha in np.arange(0, 1, 0.1):
-                yield self.interpolation(self.blink_height, self.next_face, alpha)
-                cv2.waitKey(self.interpolation_speed)
+
+            
+            # WHEN STARTING:
+            # const interpolation_duration = 1.2s
+            # time_elapsed_since_begining_of_interpolation = 0
+
+
+            # AT EACH LOOP (get_next_frame):
+            time_elapsed_since_begining_of_interpolation += duration
+
+            alpha = time_elapsed_since_begining_of_interpolation/interpolation_duration
+            if alpha > 1: # interpolation finished
+                self.face = self.next_face
+                return self.face
+            else:
+                return self.interpolation(self.blink_height, self.next_face, alpha)
+
+            #for alpha in np.arange(0, 1, 0.1):
+            #    yield self.interpolation(self.blink_height, self.next_face, alpha)
+                #cv2.waitKey(self.interpolation_speed)
             self.startup = False
 
         if self.time - self.time_last_blink > self.blink_time:  # Blink if time since last blink > self.blink_time (6000ms)
             print("Blinking")
             for alpha in np.arange(0, 1, 0.1):
                 yield self.interpolation(self.next_face, self.blink_height, alpha)
-                cv2.waitKey(self.interpolation_speed)
+                #cv2.waitKey(self.interpolation_speed)
             for alpha in np.arange(0, 1, 0.1):
                 yield self.interpolation(self.blink_height, self.next_face, alpha)
-                cv2.waitKey(self.interpolation_speed)
+                #cv2.waitKey(self.interpolation_speed)
             self.time_last_blink = self.time
 
         if self.next_expression is None:
@@ -109,7 +126,7 @@ class FaceManager:
         if self.next_expression is not None:
             print("Show expression")
             for alpha in np.arange(0, 1, 0.1):
-                cv2.waitKey(self.interpolation_speed)
+                #cv2.waitKey(self.interpolation_speed)
                 yield self.interpolation(self.prior_face, self.next_face, alpha)
             self.next_expression = None
 
