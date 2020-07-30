@@ -11,7 +11,8 @@ setuptools.setup(
     description="Procedural, expressive eyes",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=setuptools.find_packages(),
+    package_dir = {'': 'src'},
+    packages=['expressive_eyes'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

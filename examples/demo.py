@@ -1,6 +1,6 @@
 import cv2
 
-from face_manager import FaceManager
+from expressive_eyes.face_manager import *
 
 
 fm = FaceManager(width=600, height=480)
@@ -38,7 +38,7 @@ event_key = 0
 while True:
     key = cv2.waitKey(100)
 
-    if key == 122:
+    if key == 122: # z
         fm.show_expression("Happy", duration=400)
         print("Happy")
 
@@ -47,6 +47,8 @@ while True:
     elif key == 27:  # ESC
         cv2.destroyAllWindows()
         exit(0)
+
     face = fm.get_next_frame(event=event_key, duration=500)
+
     for i in face:
         cv2.imshow("Face", i)

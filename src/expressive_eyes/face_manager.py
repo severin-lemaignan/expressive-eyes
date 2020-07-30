@@ -1,4 +1,4 @@
-from expressive_eyes import *
+from .faces import *
 import numpy as np
 
 
