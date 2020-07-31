@@ -2,8 +2,7 @@ import cv2
 
 from expressive_eyes.face_manager import *
 
-
-fm = FaceManager(width=600, height=480)
+fm = FaceManager(width=1980, height=1080)
 key_event = {
     97: 1,
     98: 2,
@@ -34,21 +33,7 @@ key_event = {
 
 # fm.display_all_faces()
 
-event_key = 0
 while True:
-    key = cv2.waitKey(100)
-
-    if key == 122: # z
-        fm.show_expression("Happy", duration=400)
-        print("Happy")
-
-    if key in range(97, 122):  # a to y
-        event_key = key_event[key]
-    elif key == 27:  # ESC
-        cv2.destroyAllWindows()
-        exit(0)
-
-    face = fm.get_next_frame(event=event_key, duration=500)
-
-    for i in face:
-        cv2.imshow("Face", i)
+    face = fm.get_next_frame(event=4, elapsed_time_since_last_call=1000)
+    cv2.waitKey(10)
+    cv2.imshow("Face", face)
