@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import pycozmo
+import pycozmo.procedural_face as pycozmo_face
 from scipy import interpolate
 
 DEFAULT_EYE = {"CENTER_X": 0, "CENTER_Y": 0,
@@ -55,8 +55,8 @@ Y = (0.0, 0.0, 1.0); ANGLE = (0.0, -60.0, 60.0); BEND = (0.0, 0.0, 1.0)
         for j, p in eye_parameters_left.items():
             self.left[master.index(j)] = p
 
-    def render(self):
-        face = pycozmo.procedural_face.ProceduralFace(left_eye=self.left, right_eye=self.right)
+    def face_render(self, width=128, height=64):
+        face = pycozmo_face.ProceduralFace(left_eye=self.left, right_eye=self.right, WIDTH=width, HEIGHT=height)
         return face.render().convert('RGB')
 
     def interpolateface(self, face, alpha):
@@ -106,11 +106,11 @@ class AngryFace(Face):
         super().__init__(
             {
                 "UPPER_LID_Y": upper_lid_y,
-                "UPPER_LID_ANGLE": -upper_lid_angle
+                "UPPER_LID_ANGLE": -upper_lid_angle,
             },
             {
                 "UPPER_LID_Y": upper_lid_y,
-                "UPPER_LID_ANGLE": upper_lid_angle
+                "UPPER_LID_ANGLE": upper_lid_angle,
             })
 
 
@@ -272,7 +272,6 @@ class VulnerableFace(Face):
             })
 
 
-
 class DespairFace(Face):
     """
     Function to produce a despairing face.
@@ -377,7 +376,7 @@ class HorrifiedFace(Face):
 
     UPPER_LID_ANGLE = (0.0, -60.0, 60.0);
     """
-    def __init__(self, upper_lid_angle=20.0, lower_lid_y=0.5):
+    def __init__(self, upper_lid_angle=20.0):
         super().__init__(
             {
              "UPPER_LID_ANGLE": upper_lid_angle,
@@ -690,10 +689,9 @@ class BlinkMed(Face):
             })
 
 
-if __name__ == '__main__':
-    import cv2
-    import tkinter
-    root = tkinter.Tk()
-    width = root.winfo_screenwidth()
-    height = root.winfo_screenheight()
+def main():
+    pass
 
+
+if __name__ == '__main__':
+    main()
