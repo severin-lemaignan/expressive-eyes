@@ -4,7 +4,7 @@ import numpy as np
 
 class FaceManager:
 
-    def __init__(self, width=600, height=480):
+    def __init__(self, width=128, height=64):
 
         self.face_type = {
             # Event: face, blink_height, blink_time, interpolation_speed
@@ -26,7 +26,7 @@ class FaceManager:
             15: [GuiltyFace(), BlinkLow(), 6000, 40],
             16: [SkepticalFace(), BlinkLow(), 6000, 40],
             17: [SuspiciousFace(), BlinkMed(), 6000, 40],
-            18: [ConfusedFace(),BlinkMed(), 6000, 40],
+            18: [ConfusedFace(), BlinkMed(), 6000, 40],
             19: [SadFace(), BlinkLow(), 6000, 40],
             20: [VulnerableFace(), BlinkMed(), 6000, 40],
             21: [RejectedFace(), BlinkLow(), 6000, 40],
@@ -69,7 +69,7 @@ class FaceManager:
 
         self.time_last_blink = 0
         self.is_blinking = False
-        self.startup = True
+        self.startup = False
 
         self.next_expression = None
         self.is_showing_expression = False
@@ -79,44 +79,45 @@ class FaceManager:
         self.next_face = self.prior_face
         self.duration = 0
 
+        self.const_interpolation_duration = 6000  # ms
+        self.time_elapsed_since_beginning_of_interpolation = 0
+        self.frames = 0
+        self.blink_down = True
+
     def get_next_frame(self, event, elapsed_time_since_last_call):
-        self.duration = duration
+
+        self.duration = elapsed_time_since_last_call
         self.time += self.duration
-        print(self.time - self.time_last_blink)
 
-        if self.startup:
-            print("Start up")
-
-            
-            # WHEN STARTING:
-            # const interpolation_duration = 1.2s
-            # time_elapsed_since_begining_of_interpolation = 0
-
-
-            # AT EACH LOOP (get_next_frame):
-            time_elapsed_since_begining_of_interpolation += duration
-
-            alpha = time_elapsed_since_begining_of_interpolation/interpolation_duration
-            if alpha > 1: # interpolation finished
-                self.face = self.next_face
-                return self.face
+        if self.startup is False:
+            self.frames = self.time_elapsed_since_beginning_of_interpolation/self.blink_time
+            if self.frames > 1:
+                self.time_elapsed_since_beginning_of_interpolation = 0
+                self.startup = True
+                return self.interpolation(self.blink_height, self.next_face, 1.0, self.width, self.height)
             else:
-                return self.interpolation(self.blink_height, self.next_face, alpha)
+                self.time_elapsed_since_beginning_of_interpolation += self.duration  # ms
+                return self.interpolation(self.blink_height, self.next_face, self.frames, self.width, self.height)
 
-            #for alpha in np.arange(0, 1, 0.1):
-            #    yield self.interpolation(self.blink_height, self.next_face, alpha)
-                #cv2.waitKey(self.interpolation_speed)
-            self.startup = False
-
-        if self.time - self.time_last_blink > self.blink_time:  # Blink if time since last blink > self.blink_time (6000ms)
-            print("Blinking")
-            for alpha in np.arange(0, 1, 0.1):
-                yield self.interpolation(self.next_face, self.blink_height, alpha)
-                #cv2.waitKey(self.interpolation_speed)
-            for alpha in np.arange(0, 1, 0.1):
-                yield self.interpolation(self.blink_height, self.next_face, alpha)
-                #cv2.waitKey(self.interpolation_speed)
-            self.time_last_blink = self.time
+        if self.time - self.time_last_blink > self.blink_time:
+            self.frames = self.time_elapsed_since_beginning_of_interpolation/self.blink_time
+            if self.blink_down:
+                if self.frames > 1:
+                    self.time_elapsed_since_beginning_of_interpolation = 0
+                    self.blink_down = False
+                    return self.interpolation(self.next_face, self.blink_height, 1.0, self.width, self.height)
+                else:
+                    self.time_elapsed_since_beginning_of_interpolation += self.duration
+                    return self.interpolation(self.next_face, self.blink_height, self.frames, self.width, self.height)
+            else:
+                if self.frames > 1:
+                    self.time_elapsed_since_beginning_of_interpolation = 0
+                    self.blink_down = True
+                    self.time_last_blink = self.time
+                    return self.interpolation(self.blink_height, self.next_face, 1.0, self.width, self.height)
+                else:
+                    self.time_elapsed_since_beginning_of_interpolation += self.duration
+                    return self.interpolation(self.blink_height, self.next_face, self.frames, self.width, self.height)
 
         if self.next_expression is None:
             self.prior_face = self.next_face
@@ -124,32 +125,26 @@ class FaceManager:
             self.next_expression = not None
 
         if self.next_expression is not None:
-            print("Show expression")
-            for alpha in np.arange(0, 1, 0.1):
-                #cv2.waitKey(self.interpolation_speed)
-                yield self.interpolation(self.prior_face, self.next_face, alpha)
-            self.next_expression = None
+            if self.frames > 1:
+                self.time_elapsed_since_beginning_of_interpolation = 0
+                self.next_expression = None
+                return self.interpolation(self.prior_face, self.next_face, 1.0, self.width, self.height)
+            else:
+                self.time_elapsed_since_beginning_of_interpolation += self.duration
+                return self.interpolation(self.prior_face, self.next_face, self.frames, self.width, self.height)
 
-    def interpolation(self, prior_face, next_face, alpha):
+    @staticmethod
+    def interpolation(prior_face, next_face, alpha, width, height):
         temp_face = prior_face.interpolateface(next_face, alpha)
-        face_render = np.array(temp_face.render())
-        resized_image = cv2.resize(face_render, (self.width, self.height), interpolation=cv2.INTER_NEAREST)
-        return resized_image
+        face_render = np.array(temp_face.face_render(width=width, height=height))
+        return face_render
 
     def show_expression(self, face_str, duration):
         self.next_face = self.face_name[face_str]
         self.duration = duration
 
     def display_all_faces(self):
-        face_render = []
+        face_show = []
         for name, face in self.face_name.items():
-            i = list(self.face_name.keys()).index(name)
-            face_render.append(np.array(face.render()))
-            large = cv2.resize(face_render[i], (200, 200), interpolation=cv2.INTER_NEAREST)
-            cv2.imshow(name, large)
-            cv2.waitKey(100)
-            while i == 24:
-                wait_key = cv2.waitKey(0)
-                if wait_key == 27:
-                    cv2.destroyAllWindows()
-                    exit(0)
+            face_show.append(np.array(face.face_render()))
+            cv2.imshow(name, face_show)
