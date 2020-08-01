@@ -3,6 +3,7 @@ import cv2
 from expressive_eyes.face_manager import *
 
 fm = FaceManager(width=1980, height=1080)
+
 key_event = {
     97: 1,
     98: 2,
@@ -34,6 +35,6 @@ key_event = {
 # fm.display_all_faces()
 
 while True:
-    face = fm.get_next_frame(event=4, elapsed_time_since_last_call=1000)
-    cv2.waitKey(10)
+    face, wait_time = fm.run_expressive_eyes(event=4, elapsed_time_since_last_call=1000)
+    cv2.waitKey(wait_time)
     cv2.imshow("Face", face)
