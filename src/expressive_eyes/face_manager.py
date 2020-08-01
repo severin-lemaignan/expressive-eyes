@@ -65,13 +65,13 @@ class FaceManager:
         self.width = width
         self.height = height
 
-        self.time = 0  # in ms
+        self.time = 0
         self.time_last_blink = 0
         self.duration = 0
 
         self.startup = False
         self.blink_down = True
-        self.next_expression = None
+        self.next_expression = False
 
         self.prior_face, self.blink_height, self.blink_time, self.interpolation_speed = self.face_type[0]
 
@@ -102,17 +102,17 @@ class FaceManager:
                 else:
                     return face, self.wait_time
 
-        if self.next_expression is None:  # Setting the next expression
+        if self.next_expression is False:  # Setting the next expression
             self.prior_face = self.next_face
             self.next_face, self.blink_height, self.blink_time, self.interpolation_speed = self.face_type[event]
-            self.next_expression = not None
+            self.next_expression = True
 
-        if self.next_expression is not None:  # Displaying the next expression
+        if self.next_expression:  # Displaying the next expression
             if self.prior_face == self.next_face:
                 self.wait_time = 1
                 return self.interpolation(self.prior_face, self.next_face, 1.0, self.width, self.height), self.wait_time
             else:
-                face, self.wait_time, _ = self.get_next_frame(self.interpolation_speed, None, self.prior_face, self.next_face,)
+                face, self.wait_time, self.next_expression = self.get_next_frame(self.interpolation_speed, self.next_expression, self.prior_face, self.next_face,)
                 return face, self.wait_time
 
     def get_next_frame(self, interpolation_time, true_statement, prior_face, next_face):
