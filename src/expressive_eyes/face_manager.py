@@ -8,30 +8,30 @@ class FaceManager:
         self.face_type = {
             # face face_type, blink_height, blink_time, const_interpolation_time (seconds)
             "Neutral": [NeutralFace(), BlinkMed(), 6, 1],
-            "Happy": [HappyFace(), BlinkHigh(), 6000, 4],
-            "Amazed": [AmazedFace(), BlinkMed(), 6000, 4],
-            "Excited": [ExcitedFace(), BlinkMed(), 6000, 4],
+            "Happy": [HappyFace(), BlinkHigh(), 6, 1],
+            "Amazed": [AmazedFace(), BlinkMed(), 6, 1],
+            "Excited": [ExcitedFace(), BlinkMed(), 6, 1],
             "Angry": [AngryFace(), BlinkLow(), 6, 1],
-            "Surprised": [SurprisedFace(), BlinkMed(), 6000, 4],
-            "Fear": [FearFace(), BlinkMed(), 6000, 4],
-            "Despair": [DespairFace(), BlinkLow(), 6000, 4],
-            "Disappointed": [DisappointedFace(), BlinkMed(), 6, 4],
-            "Embarrassed": [EmbarrassedFace(), BlinkLow(), 6000, 4],
-            "Horrified": [HorrifiedFace(), BlinkMed(), 6000, 4],
-            "Annoyed": [AnnoyedFace(), BlinkMed(), 6000, 4],
-            "Furious": [FuriousFace(), BlinkMed(), 6000, 4],
-            "Disgust": [DisgustFace(), BlinkMed(), 6000, 4],
-            "Pleading": [PleadingFace(), BlinkMed(), 6000, 4],
-            "Guilty": [GuiltyFace(), BlinkLow(), 6000, 4],
-            "Skeptical": [SkepticalFace(), BlinkLow(), 6000, 4],
-            "Suspicious": [SuspiciousFace(), BlinkMed(), 6000, 4],
-            "Confused": [ConfusedFace(), BlinkMed(), 6000, 4],
-            "Sad": [SadFace(), BlinkLow(), 6000, 4],
-            "Vulnerable": [VulnerableFace(), BlinkMed(), 6000, 4],
-            "Rejected": [RejectedFace(), BlinkLow(), 6000, 4],
-            "Bored": [BoredFace(), BlinkLow(), 6000, 4],
-            "Tired": [TiredFace(), BlinkLow(), 6000, 4],
-            "Asleep": [AsleepFace(), BlinkMed(), 6000, 4]
+            "Surprised": [SurprisedFace(), BlinkMed(), 6, 1],
+            "Fear": [FearFace(), BlinkMed(), 6, 1],
+            "Despair": [DespairFace(), BlinkLow(), 6, 1],
+            "Disappointed": [DisappointedFace(), BlinkMed(), 6, 1],
+            "Embarrassed": [EmbarrassedFace(), BlinkLow(), 6, 1],
+            "Horrified": [HorrifiedFace(), BlinkMed(), 6, 1],
+            "Annoyed": [AnnoyedFace(), BlinkMed(), 6, 1],
+            "Furious": [FuriousFace(), BlinkMed(), 6, 1],
+            "Disgust": [DisgustFace(), BlinkMed(), 6, 1],
+            "Pleading": [PleadingFace(), BlinkMed(), 6, 1],
+            "Guilty": [GuiltyFace(), BlinkLow(), 6, 1],
+            "Skeptical": [SkepticalFace(), BlinkLow(), 6, 1],
+            "Suspicious": [SuspiciousFace(), BlinkMed(), 6, 1],
+            "Confused": [ConfusedFace(), BlinkMed(), 6, 1],
+            "Sad": [SadFace(), BlinkLow(), 6, 1],
+            "Vulnerable": [VulnerableFace(), BlinkMed(), 6, 1],
+            "Rejected": [RejectedFace(), BlinkLow(), 6, 1],
+            "Bored": [BoredFace(), BlinkLow(), 6, 1],
+            "Tired": [TiredFace(), BlinkLow(), 6, 1],
+            "Asleep": [AsleepFace(), BlinkMed(), 6, 1]
         }
 
         self.width = width
@@ -52,13 +52,13 @@ class FaceManager:
 
     def run_expressive_eyes(self, face_str, elapsed_time):
         self.time_between_frames = elapsed_time
+        self.face_str = face_str
 
         if self.startup:
             face, self.startup = self.get_next_frame(self.startup, self.const_interpolation_time, self.blink_height,
                                                      self.current_face)
             return face
-
-        self.face_str = face_str
+        print(elapsed_time)
         self.time_last_blink += elapsed_time
 
         if self.time_last_blink > self.blink_time:
@@ -76,12 +76,8 @@ class FaceManager:
                     return face
 
         if self.next_expression is False:
-            self.prior_face = self.current_face
-            self.current_face, self.blink_height, self.blink_time, self.const_interpolation_time = self.face_type[self.face_str]
-            self.eye_position(0, 0, 0)  # This cannot be static due to dictionary mutability.
-            # It sets values for both prior and current face so doesn't interpolate properly if they are the same
-            # and the eye_position changes
-            self.openface_implementation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            self.eye_position(0, 0, 0)
+            self.set_next_expression(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0)
             self.next_expression = True
 
         if self.next_expression:
@@ -101,9 +97,10 @@ class FaceManager:
         else:
             return self.interpolation(prior_face, current_face, self.frames, self.width, self.height), boolean
 
-    def openface_implementation(self, au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23,
-                                au25, au26, au45):
+    def set_next_expression(self, au01, au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23,
+                            au25, au26, au28, au45):
         au_names = {
+            "inner brow raiser": au01,
             "outer brow raiser": au02,
             "brow lowerer": au04,
             "upper lid raiser": au05,
@@ -122,34 +119,35 @@ class FaceManager:
             "blink": au45
         }
         au_standard_values = {
-            "Neutral": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Happy": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Amazed": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Excited": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Angry": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Surprised": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Fear": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Despair": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Disappointed": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Embarrassed": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Horrified": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Annoyed": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Furious": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Disgust": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Pleading": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Guilty": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Skeptical": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Suspicious": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Confused": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Sad": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Vulnerable": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Rejected": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Bored": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Tired": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45],
-            "Asleep": [au02, au04, au05, au06, au07, au09, au10, au12, au14, au15, au17, au20, au23, au25, au26, au45]
+            "Neutral": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, None, 0, 0, 0, 0, 0, None],
+            "Happy": [0, 0, 0, 1, 1, 0, 1, 1, None, 0, None, 0, 0, 0, 0, 0, None],
+            "Amazed": [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, None, 0, 0, 1, 1, 0, None],
+            "Excited": [0, 0, 0, 1, 1, 1, 1, 1, None, 0, None, 1, 0, 0, 0, 0, None],
+            "Angry": [0, 1, 1, 0, 1, 0, 0, 0, 0, 0, None, 1, 1, 0, 0, 0, None],  # au23 and au24 must be present
+            "Surprised": [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, None, 0, 0, None, None, 0, None],  # Either au1+2 or 5 must be
+            # present and the intensity of AU5 must not be stronger than B
+            "Fear": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None], # AU combination of au1+2+4 must be present, unless au5 is of intensity E then au4 can be absent
+            "Despair": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Disappointed": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Embarrassed": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Horrified": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Annoyed": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Furious": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Disgust": [0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, None],  # Either au09 or au10 is present
+            "Pleading": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Guilty": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Skeptical": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Suspicious": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Confused": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Sad": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, None],
+            "Vulnerable": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Rejected": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Bored": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Tired": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None],
+            "Asleep": [au02, au04, au05, au06, au07, au09, au10, au12, None, au15, None, au20, au23, au25, au26, au28, None]
         }
-        face_str = self.face_str
-        return face_str
+        self.prior_face = self.current_face
+        self.current_face, self.blink_height, self.blink_time, self.const_interpolation_time = self.face_type[self.face_str]
 
     def eye_position(self, eye_y, left_eye_x, right_eye_x):
         self.current_face.left[0] = self.blink_height.left[0] = left_eye_x
