@@ -1,4 +1,4 @@
-from face_manager import FaceManager
+from expressive_eyes.face_manager import FaceManager
 import cv2
 import time
 
