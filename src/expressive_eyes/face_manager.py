@@ -1,4 +1,4 @@
-from faces import *
+from .faces import *
 import numpy as np
 
 
