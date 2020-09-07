@@ -5,7 +5,7 @@
 - Python 3.8.3
 - numpy
 - scipy
-
+-pycozmo (see below)
 
 - **Install the requirements for pycozmo:**
 - [Pillow 6.0.0](https://github.com/python-pillow/Pillow) - Python image library
@@ -19,6 +19,8 @@
 - `cd expressive-eyes`
 - `python3 setup.py install`
 
+Install my copy of pycozmo:
+- `git clone https://git.brl.ac.uk/ca2-chambers/pycozmo-copy`
 
 - Run demo file:
 - `cd examples`
