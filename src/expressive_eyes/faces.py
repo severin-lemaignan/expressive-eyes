@@ -2,6 +2,7 @@
 import pycozmo.procedural_face as pycozmo_face
 from scipy import interpolate
 
+# The parameters for the default face (not the same as neutral face)
 DEFAULT_EYE = {"CENTER_X": 0, "CENTER_Y": 0,
                "SCALE_X": 1.0, "SCALE_Y": 1.0,
                "ANGLE": 0.0,
@@ -16,7 +17,7 @@ DEFAULT_EYE = {"CENTER_X": 0, "CENTER_Y": 0,
 
 class Face:
     """
-Function to produce the standard face.
+Function to produce the default face.
 
 CENTER_X = (0, -50, 50); CENTER_Y = (0, -50, 50)
 SCALE_X = (1.0, 1.0, 1.0); SCALE_Y = (1.0, 1.0, 1.0); ANGLE = (0.0, 0.0, 360.0)
@@ -43,6 +44,11 @@ Y = (0.0, 0.0, 1.0); ANGLE = (0.0, -60.0, 60.0); BEND = (0.0, 0.0, 1.0)
     """
 
     def __init__(self, eye_parameters_left={}, eye_parameters_right={}):
+        """
+
+        :param eye_parameters_left: Dictionary of left eye parameters. Value ranges of the dictionary can be seen in the docstring of this class.
+        :param eye_parameters_right: Dictionary of right eye parameters.
+        """
 
         master = list(DEFAULT_EYE.keys())
 
@@ -55,11 +61,23 @@ Y = (0.0, 0.0, 1.0); ANGLE = (0.0, -60.0, 60.0); BEND = (0.0, 0.0, 1.0)
         for j, p in eye_parameters_left.items():
             self.left[master.index(j)] = p
 
-    def face_render(self, width=128, height=64):
+    def face_render(self, width=960, height=540):
+        """
+        Produces a rendered face by inputting eye parameters into ProceduralFace then rendering the shape using render.
+        :param width: Width of the window containing the eyes.
+        :param height: Height of the window containing the eyes.
+        :return: Rendered face, to display the face use cv2.imshow
+        """
         face = pycozmo_face.ProceduralFace(left_eye=self.left, right_eye=self.right, WIDTH=width, HEIGHT=height)
         return face.render().convert('RGB')
 
     def interpolateface(self, face, alpha):
+        """
+        Interpolates from self to the given face.
+        :param face: The final face of the interpolation.
+        :param alpha: Determines the amount of interpolation. Any number between 0 and 1. For example: 1 means the input face is returned. 0 means self is returned. 0.5 is 50% between the two.
+        :return: Returns an interpolated frame. Needs rendering with face_render and displaying with cv2,show to show anything.
+        """
         interpolated_left = []
         interpolated_right = []
         for k in range(0, len(self.left)):
@@ -85,12 +103,14 @@ class NeutralFace(Face):
 
     Standard face is NeutralFace()
     """
-    def __init__(self):
+    def __init__(self, scale_x=0.8, scale_y=0.8):
         super().__init__(
-            {
-            },
-            {
-            })
+            {"SCALE_X": scale_x,
+             "SCALE_Y": scale_y
+             },
+            {"SCALE_X": scale_x,
+             "SCALE_Y": scale_y
+             })
 
 
 #  Six basic expressions by Ekman
@@ -296,22 +316,19 @@ class GuiltyFace(Face):
     """
     Function to produce a guilty face.
 
-    Standard face is GuiltyFace(35, 0.6, 10.0, 0.3)
+    Standard face is GuiltyFace(0.6, 10.0, 0.3)
 
-    CENTER_Y = (0, -50, 50);
     UPPER_LID_Y = (0.0, 0.0, 1.0); UPPER_LID_ANGLE = (0.0, -60.0, 60.0);
     UPPER_LID_BEND = (0.0, 0.0, 1.0);
     """
-    def __init__(self, center_y=35, upper_lid_y=0.6, upper_lid_angle=10.0, upper_lid_bend=0.3):
+    def __init__(self, upper_lid_y=0.6, upper_lid_angle=10.0, upper_lid_bend=0.3):
         super().__init__(
             {
-             "CENTER_Y": center_y,
              "UPPER_LID_Y": upper_lid_y,
              "UPPER_LID_ANGLE": upper_lid_angle,
              "UPPER_LID_BEND": upper_lid_bend,
             },
             {
-             "CENTER_Y": center_y,
              "UPPER_LID_Y": upper_lid_y,
              "UPPER_LID_ANGLE": -upper_lid_angle,
              "UPPER_LID_BEND": upper_lid_bend,
@@ -556,7 +573,7 @@ class AsleepFace(Face):
 
     Standard face is AsleepFace(50, 0.5, 0.5)
 
-    CENTER_Y = (0, -50, 50);
+    CENTER_Y = (0, -height, height);
     UPPER_LID_Y = (0.0, 0.0, 1.0);
     LOWER_LID_Y = (0.0, 0.0, 1.0);
     """
