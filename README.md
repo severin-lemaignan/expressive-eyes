@@ -5,7 +5,7 @@
 - Python 3.8.3
 - numpy
 - scipy
--pycozmo (see below)
+- pycozmo (see below)
 
 - **Install the requirements for pycozmo:**
 - [Pillow 6.0.0](https://github.com/python-pillow/Pillow) - Python image library
@@ -14,17 +14,23 @@
 
 ## To install/use on a Linux machine
 
+
 - Install from source:
 - `git clone https://git.brl.ac.uk/ca2-chambers/expressive-eyes`
 - `cd expressive-eyes`
 - `python3 setup.py install`
 
-Install my copy of pycozmo:
-- `git clone https://git.brl.ac.uk/ca2-chambers/pycozmo-copy`
+
+Install my copy of pycozmo (do not use pip install pycozmo):
+- `git clone https://git.brl.ac.uk/ca2-chambers/pycozmo`
+- `cd pycozmo`
+- `python3 setup.py install --user`
+
 
 - Run demo file:
 - `cd examples`
 - `python3 demo.py`
+
 
 ## To install/use on the Jolla phone
 
