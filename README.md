@@ -1,6 +1,11 @@
 # Expressive Eyes
 
+
+![24 images of different expressive eyes](https://git.brl.ac.uk/ca2-chambers/expressive-eyes/raw/524a6cc95a393120c11053bedd9a0a74a6e1a2f7/doc/Face_Images/All_faces_no_colour.png)
+
+
 ## Requirements
+
 
 - Python 3.8.3
 - numpy
@@ -12,20 +17,19 @@
 - [FlatBuffers](https://github.com/google/flatbuffers) - serialization library
 - [dpkt](https://github.com/kbandla/dpkt) - TCP/IP packet parsing library
 
+Install my copy of pycozmo (do not use pip install pycozmo):
+- `git clone https://git.brl.ac.uk/ca2-chambers/pycozmo`
+- `cd pycozmo`
+- `python3 setup.py install --user`
+
+
 ## To install/use on a Linux machine
 
 
 - Install from source:
 - `git clone https://git.brl.ac.uk/ca2-chambers/expressive-eyes`
 - `cd expressive-eyes`
-- `python3 setup.py install`
-
-
-Install my copy of pycozmo (do not use pip install pycozmo):
-- `git clone https://git.brl.ac.uk/ca2-chambers/pycozmo`
-- `cd pycozmo`
 - `python3 setup.py install --user`
-
 
 - Run demo file:
 - `cd examples`
