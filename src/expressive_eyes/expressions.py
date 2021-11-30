@@ -12,15 +12,68 @@ from typing import Optional, List
 from .procedural_face import ProceduralFace, DEFAULT_WIDTH, DEFAULT_HEIGHT
 
 
+# see Circumplex model
+# -1.0 <= arousal <= 1.0
+# -1.0 <= valence <= 1.0
+AROUSAL_VALENCE = {
+    "Neutral": [0.0, 0.0],
+    "Anger": [0.9, -0.6],
+    "Sadness": [-0.9, -0.2],
+    "Happy": [0.0, 0.4],
+    "Surprise": [1.0, 0.0],
+    "Disgust": [0.5, -0.6],
+    "Fear": [0.8, -0.5],
+    "Pleading": [-0.4, -0.4],
+    "Vulnerability": [-0.6, -0.3],
+    "Despair": [-0.55, -0.7],
+    "Guilt": [-0.3, -0.5],
+    "Disappointment": [-0.1, -0.9],
+    "Embarrassment": [-0.6, -0.2],
+    "Horror": [-0.2, -1.0],
+    "Skepticism": [0.2, -0.2],
+    "Annoyance": [-0.2, -0.2],
+    "Fury": [1.0, -1.0],
+    "Suspicion": [0.2, -0.5],
+    "Rejection": [-0.2, -0.9],
+    "Boredom": [0.0, -0.2],
+    "Tired": [-1.0, 0.0],
+    "Asleep": [-1.0, 0.0],
+    "Confused": [-0.2, 0.0],
+    "Amazed": [0.3, 0.6],
+    "Excited": [0.6, 0.6],
+}
+
+
 def get(name):
     """Returns an instance of a face expression.
 
-    for example: expression = get("Happiness")
+    for example: expression = get("Happy")
     """
     import sys
 
     current_module = sys.modules[__name__]
     return getattr(current_module, name)()
+
+
+def get_valence_arousal(valence=0.0, arousal=0.0):
+    """Returns a face expression that best match a pair (valence, arousal)."""
+    best_match = ""
+    best_distance = 2.0
+
+    for expr, va in AROUSAL_VALENCE.items():
+        v, a = va
+        distance = (v - valence) * (v - valence) + (a - arousal) * (a - arousal)
+        if distance == 0:
+            best_match = expr
+            break
+        if distance < best_distance:
+            best_distance = distance
+            best_match = expr
+
+    import sys
+
+    current_module = sys.modules[__name__]
+    return getattr(current_module, best_match)()
 
 
 class Neutral(ProceduralFace):
@@ -68,7 +121,7 @@ class Sadness(ProceduralFace):
         self.eyes[1].lids[0].angle = -20.0
 
 
-class Happiness(ProceduralFace):
+class Happy(ProceduralFace):
     def __init__(
         self,
         params: Optional[List[float]] = None,
@@ -348,7 +401,7 @@ class Boredom(ProceduralFace):
         self.eyes[1].lids[0].y = 0.4
 
 
-class Tiredness(ProceduralFace):
+class Tired(ProceduralFace):
     def __init__(
         self,
         params: Optional[List[float]] = None,
@@ -383,7 +436,7 @@ class Asleep(ProceduralFace):
 # Sub-expressions of confusion.
 
 
-class Confusion(ProceduralFace):
+class Confused(ProceduralFace):
     def __init__(
         self,
         params: Optional[List[float]] = None,
@@ -400,7 +453,7 @@ class Confusion(ProceduralFace):
         self.eyes[1].lids[1].bend = 0.2
 
 
-class Amazement(ProceduralFace):
+class Amazed(ProceduralFace):
     def __init__(
         self,
         params: Optional[List[float]] = None,
@@ -412,7 +465,7 @@ class Amazement(ProceduralFace):
         self.eyes[1].lids[1].y = 0.2
 
 
-class Excitement(ProceduralFace):
+class Excited(ProceduralFace):
     def __init__(
         self,
         params: Optional[List[float]] = None,
