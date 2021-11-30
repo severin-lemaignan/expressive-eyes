@@ -18,11 +18,9 @@ from time import sleep
 __all__ = [
     "DEFAULT_WIDTH",
     "DEFAULT_HEIGHT",
-
     "ProceduralLid",
     "ProceduralEye",
     "ProceduralFace",
-
     "interpolate",
 ]
 
@@ -54,11 +52,7 @@ class ProceduralBase:
         "scale_factor_lid_bend",
     )
 
-    def __init__(self,
-                 params: List[float],
-                 offset: int,
-                 width: int,
-                 height: int):
+    def __init__(self, params: List[float], offset: int, width: int, height: int):
         self.params = params
         self.offset = offset
         self.width = width
@@ -78,14 +72,15 @@ class ProceduralLid(ProceduralBase):
         "angle_offset",
     )
 
-    def __init__(self,
-                 params: List[float],
-                 offset: int,
-                 y_offset: float,
-                 angle_offset: float,
-                 width: int,
-                 height: int
-                 ):
+    def __init__(
+        self,
+        params: List[float],
+        offset: int,
+        y_offset: float,
+        angle_offset: float,
+        width: int,
+        height: int,
+    ):
         super().__init__(params, offset, width, height)
         self.y_offset = float(y_offset)
         self.angle_offset = float(angle_offset)
@@ -141,12 +136,13 @@ class ProceduralLid(ProceduralBase):
         draw.chord(((x3, y3), (x4, y4)), 0, 180, fill=1)
 
         # Rotate
-        lid = lid.rotate(self.angle + self.angle_offset,
-                         resample=RESAMPLE, expand=0)
+        lid = lid.rotate(self.angle + self.angle_offset, resample=RESAMPLE, expand=0)
 
         # Translate and compose
-        location = (int((im.size[0] - lid.size[0]) / 2),
-                    int((im.size[1] - lid.size[1]) / 2 + self.y_offset))
+        location = (
+            int((im.size[0] - lid.size[0]) / 2),
+            int((im.size[1] - lid.size[1]) / 2 + self.y_offset),
+        )
         black = self.get_black(self.width * 2, self.height * 2)
         im.paste(black, location, lid)
 
@@ -159,20 +155,29 @@ class ProceduralEye(ProceduralBase):
         "lids",
     )
 
-    def __init__(self,
-                 params: List[float],
-                 offset: int,
-                 x_offset: float = 0.0,
-                 width: int = DEFAULT_WIDTH,
-                 height: int = DEFAULT_HEIGHT):
+    def __init__(
+        self,
+        params: List[float],
+        offset: int,
+        x_offset: float = 0.0,
+        width: int = DEFAULT_WIDTH,
+        height: int = DEFAULT_HEIGHT,
+    ):
         super().__init__(params, offset, width, height)
         self.x_offset = float(x_offset)
-        self.corner_radius = (self.width / 20 + self.height / 10)
+        self.corner_radius = self.width / 20 + self.height / 10
         self.lids = (
-            ProceduralLid(params, offset + 13, -
-                          self.half_eye_height, 0.0, self.width, self.height),
-            ProceduralLid(params, offset + 13 + 3,
-                          self.half_eye_height + 1, 180.0, self.width, self.height)
+            ProceduralLid(
+                params, offset + 13, -self.half_eye_height, 0.0, self.width, self.height
+            ),
+            ProceduralLid(
+                params,
+                offset + 13 + 3,
+                self.half_eye_height + 1,
+                180.0,
+                self.width,
+                self.height,
+            ),
         )
 
     @property
@@ -280,8 +285,10 @@ class ProceduralEye(ProceduralBase):
         self.params[self.offset + 12] = value
 
     def _render_inner_rect(self, draw: ImageDraw, y1: int, x2: int, y2: int) -> None:
-        x3 = x2 - int(self.corner_radius *
-                      max(self.upper_inner_radius_x, self.lower_inner_radius_x))
+        x3 = x2 - int(
+            self.corner_radius
+            * max(self.upper_inner_radius_x, self.lower_inner_radius_x)
+        )
         y3 = y1 + int(self.corner_radius * self.upper_inner_radius_y)
         x4 = x2
         y4 = y2 - int(self.corner_radius * self.lower_inner_radius_y)
@@ -291,35 +298,67 @@ class ProceduralEye(ProceduralBase):
         x3 = x1 + int(self.corner_radius * self.upper_outer_radius_x)
         y3 = y1
         x4 = x2 - int(self.corner_radius * self.upper_inner_radius_x)
-        y4 = y1 + int(self.corner_radius *
-                      max(self.upper_outer_radius_y, self.upper_inner_radius_y))
+        y4 = y1 + int(
+            self.corner_radius
+            * max(self.upper_outer_radius_y, self.upper_inner_radius_y)
+        )
         draw.rectangle(((x3, y3), (x4, y4)), fill=1)
 
     def _render_outer_rect(self, draw: ImageDraw, x1: int, y1: int, y2: int) -> None:
         x3 = x1
         y3 = y1 + int(self.corner_radius * self.upper_outer_radius_y)
-        x4 = x1 + int(self.corner_radius *
-                      max(self.upper_outer_radius_x, self.lower_outer_radius_x))
+        x4 = x1 + int(
+            self.corner_radius
+            * max(self.upper_outer_radius_x, self.lower_outer_radius_x)
+        )
         y4 = y2 - int(self.corner_radius * self.lower_outer_radius_y)
         draw.rectangle(((x3, y3), (x4, y4)), fill=1)
 
     def _render_lower_rect(self, draw: ImageDraw, x1: int, x2: int, y2: int) -> None:
         x3 = x1 + int(self.corner_radius * self.lower_outer_radius_x)
-        y3 = y2 - int(self.corner_radius *
-                      max(self.lower_outer_radius_y, self.lower_inner_radius_y))
+        y3 = y2 - int(
+            self.corner_radius
+            * max(self.lower_outer_radius_y, self.lower_inner_radius_y)
+        )
         x4 = x2 - int(self.corner_radius * self.lower_inner_radius_x)
         y4 = y2
         draw.rectangle(((x3, y3), (x4, y4)), fill=1)
 
-    def _render_center_rect(self, draw: ImageDraw, x1: int, y1: int, x2: int, y2: int) -> None:
-        x3 = x1 + int(self.corner_radius *
-                      max(self.upper_outer_radius_x, self.lower_outer_radius_x)) - 2
-        y3 = y1 + int(self.corner_radius *
-                      max(self.upper_outer_radius_y, self.upper_inner_radius_y)) - 1
-        x4 = x2 - int(self.corner_radius *
-                      max(self.upper_inner_radius_y, self.lower_inner_radius_y)) + 2
-        y4 = y2 - int(self.corner_radius *
-                      max(self.lower_outer_radius_y, self.lower_inner_radius_y)) + 1
+    def _render_center_rect(
+        self, draw: ImageDraw, x1: int, y1: int, x2: int, y2: int
+    ) -> None:
+        x3 = (
+            x1
+            + int(
+                self.corner_radius
+                * max(self.upper_outer_radius_x, self.lower_outer_radius_x)
+            )
+            - 2
+        )
+        y3 = (
+            y1
+            + int(
+                self.corner_radius
+                * max(self.upper_outer_radius_y, self.upper_inner_radius_y)
+            )
+            - 1
+        )
+        x4 = (
+            x2
+            - int(
+                self.corner_radius
+                * max(self.upper_inner_radius_y, self.lower_inner_radius_y)
+            )
+            + 2
+        )
+        y4 = (
+            y2
+            - int(
+                self.corner_radius
+                * max(self.lower_outer_radius_y, self.lower_inner_radius_y)
+            )
+            + 1
+        )
         draw.rectangle(((x3, y3), (x4, y4)), fill=1)
 
     def _render_lower_inner_pie(self, draw: ImageDraw, x2: int, y2: int) -> None:
@@ -377,8 +416,10 @@ class ProceduralEye(ProceduralBase):
         eye = eye.rotate(self.angle, resample=RESAMPLE, expand=1)
 
         # Scale
-        scale = (int(float(eye.size[0]) * self.scale_x),
-                 int(float(eye.size[1]) * self.scale_y))
+        scale = (
+            int(float(eye.size[0]) * self.scale_x),
+            int(float(eye.size[1]) * self.scale_y),
+        )
         try:
             eye = eye.resize(scale, resample=RESAMPLE)
         except ValueError:
@@ -387,48 +428,80 @@ class ProceduralEye(ProceduralBase):
 
         # Translate and compose
         if eye:
-            location = (int((im.size[0] - eye.size[0]) / 2 + self.center_x * X_FACTOR + self.x_offset),
-                        int((im.size[1] - eye.size[1]) / 2 + self.center_y * Y_FACTOR))
+            location = (
+                int(
+                    (im.size[0] - eye.size[0]) / 2
+                    + self.center_x * X_FACTOR
+                    + self.x_offset
+                ),
+                int((im.size[1] - eye.size[1]) / 2 + self.center_y * Y_FACTOR),
+            )
             im.paste(eye, location, eye)
 
 
 class ProceduralFace(ProceduralBase):
 
-    __slots__ = (
-        "eyes",
-    )
+    __slots__ = ("eyes",)
 
-    def __init__(self,
-                 params: Optional[List[float]] = None,
-                 width: int = DEFAULT_WIDTH,
-                 height: int = DEFAULT_HEIGHT
-                 ):
+    def __init__(
+        self,
+        params: Optional[List[float]] = None,
+        width: int = DEFAULT_WIDTH,
+        height: int = DEFAULT_HEIGHT,
+    ):
         if params is None:
             params = [
                 # face parameters
-                0.0, 0.0,
-                1.0, 1.0,
+                0.0,
+                0.0,
+                1.0,
+                1.0,
                 0.0,
                 # left eye parameters
-                0.0, 0.0,
-                1.0, 1.0,
                 0.0,
-                0.5, 0.5, 0.5, 0.5,
-                0.5, 0.5, 0.5, 0.5,
-                0.0, 0.0, 0.0,
-                0.0, 0.0, 0.0,
+                0.0,
+                1.0,
+                1.0,
+                0.0,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
                 # right eye parameters
-                0.0, 0.0,
-                1.0, 1.0,
                 0.0,
-                0.5, 0.5, 0.5, 0.5,
-                0.5, 0.5, 0.5, 0.5,
-                0.0, 0.0, 0.0,
-                0.0, 0.0, 0.0,
+                0.0,
+                1.0,
+                1.0,
+                0.0,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
             ]
         if not isinstance(params, list) or len(params) < 5 + 19 + 19:
             raise ValueError(
-                "Procedural face parameters must be a list of 43 floating point values.")
+                "Procedural face parameters must be a list of 43 floating point values."
+            )
         super().__init__(params, 0, width, height)
         eye_offset = int(self.width / 5)
         self.eyes = (
@@ -491,8 +564,10 @@ class ProceduralFace(ProceduralBase):
         face = face.rotate(self.angle, resample=RESAMPLE, expand=1)
 
         # Scale
-        scale = (int(float(face.size[0]) * self.scale_x),
-                 int(float(face.size[1]) * self.scale_y))
+        scale = (
+            int(float(face.size[0]) * self.scale_x),
+            int(float(face.size[1]) * self.scale_y),
+        )
         try:
             face = face.resize(scale, resample=RESAMPLE)
         except ValueError:
@@ -501,18 +576,19 @@ class ProceduralFace(ProceduralBase):
 
         # Translate and compose
         if face:
-            location = (int((im.size[0] - face.size[0]) / 2 + self.center_x * X_FACTOR),
-                        int((im.size[1] - face.size[1]) / 2 + self.center_y * Y_FACTOR))
+            location = (
+                int((im.size[0] - face.size[0]) / 2 + self.center_x * X_FACTOR),
+                int((im.size[1] - face.size[1]) / 2 + self.center_y * Y_FACTOR),
+            )
             im.paste(face, location)
 
         return im
 
 
 def interpolate(
-        from_face: ProceduralFace,
-        to_face: ProceduralFace,
-        steps: int) -> Generator[ProceduralFace, None, None]:
-    """ Given two ProceduralFace objects, generate interpolated ProceduralFace objects in a number of steps. """
+    from_face: ProceduralFace, to_face: ProceduralFace, steps: int
+) -> Generator[ProceduralFace, None, None]:
+    """Given two ProceduralFace objects, generate interpolated ProceduralFace objects in a number of steps."""
     if steps < 2:
         raise ValueError("At least 2 steps needed for interpolation.")
     for step in range(steps):
@@ -520,15 +596,14 @@ def interpolate(
         params = []
         for i in range(len(from_face.params)):
             # https://en.wikipedia.org/wiki/Interpolation
-            y = from_face.params[i] + x * \
-                (to_face.params[i] - from_face.params[i])
+            y = from_face.params[i] + x * (to_face.params[i] - from_face.params[i])
             params.append(y)
         face = ProceduralFace(params)
         yield face
 
 
 class ProceduralFaceGenerator:
-    """ A generator class to produce eye animation. """
+    """A generator class to produce eye animation."""
 
     MAX_X_OFFSET = 10.0
     MAX_Y_OFFSET = 50.0
@@ -550,7 +625,7 @@ class ProceduralFaceGenerator:
         self.current_face.eyes[1].scale_y = 0.8
 
     def _blink(self):
-        """ Generate blink animation. """
+        """Generate blink animation."""
 
         # Create blink face at the position of the current face.
         target_face = ProceduralFace(list(self.current_face.params))
@@ -560,38 +635,46 @@ class ProceduralFaceGenerator:
         target_face.eyes[0].scale_y = self.BLINK_SCALE_Y
         target_face.eyes[1].scale_y = self.BLINK_SCALE_Y
 
-        for from_face, to_face in ((self.current_face, target_face), (target_face, self.current_face)):
+        for from_face, to_face in (
+            (self.current_face, target_face),
+            (target_face, self.current_face),
+        ):
             face_generator = interpolate(from_face, to_face, self.BLINK_STEPS)
 
             for face in face_generator:
-                im = face.render().convert('RGB')
+                im = face.render().convert("RGB")
                 np_im = np.array(im)
                 k = cv2.waitKey(1) & 0xFF
                 cv2.imshow("all EYEZ on you", np_im)
-                
 
     def __iter__(self):
-        """ Generate eye animation. """
+        """Generate eye animation."""
 
         while True:
 
             target_face = ProceduralFace()
 
             # Place the face randomly to simulate - eye saccades.
-            target_face.center_x = random.uniform(
-                -self.MAX_X_OFFSET, self.MAX_X_OFFSET)
-            target_face.center_y = random.uniform(
-                -self.MAX_Y_OFFSET, self.MAX_Y_OFFSET)
+            target_face.center_x = random.uniform(-self.MAX_X_OFFSET, self.MAX_X_OFFSET)
+            target_face.center_y = random.uniform(-self.MAX_Y_OFFSET, self.MAX_Y_OFFSET)
 
             # Bring eyes closer.
             target_face.eyes[0].center_x += 12
             target_face.eyes[1].center_x -= 12
 
             # Scale the eyes proportional to the offset from the center.
-            scale_1 = 1.0 + abs(self.current_face.center_x) * \
-                self.MAX_EYE_SCALE / self.MAX_X_OFFSET
-            scale_2 = 1.0 - abs(self.current_face.center_x) * \
-                self.MAX_EYE_SCALE / self.MAX_Y_OFFSET
+            scale_1 = (
+                1.0
+                + abs(self.current_face.center_x)
+                * self.MAX_EYE_SCALE
+                / self.MAX_X_OFFSET
+            )
+            scale_2 = (
+                1.0
+                - abs(self.current_face.center_x)
+                * self.MAX_EYE_SCALE
+                / self.MAX_Y_OFFSET
+            )
             i = 0 if target_face.center_x < 0 else 1
             target_face.eyes[i].scale_x = scale_1
             target_face.eyes[i].scale_y = scale_1 - 0.2
@@ -599,7 +682,8 @@ class ProceduralFaceGenerator:
             target_face.eyes[1 - i].scale_y = scale_2 - 0.2
 
             face_generator = interpolate(
-                self.current_face, target_face, self.SACCADE_STEPS)
+                self.current_face, target_face, self.SACCADE_STEPS
+            )
             for face in face_generator:
                 im = face.render()
                 np_im = np.array(im)
