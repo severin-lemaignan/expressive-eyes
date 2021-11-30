@@ -18,12 +18,11 @@ Cozmo procedural face rendering.
 from functools import lru_cache
 from typing import Optional, List, Generator
 import random
-import time
+from itertools import chain
 
 from PIL import Image, ImageDraw
 import numpy as np
 import cv2
-from time import sleep
 
 
 __all__ = [
@@ -644,7 +643,7 @@ class ProceduralFaceGenerator:
         self.current_face.eyes[0].scale_y = 0.8
         self.current_face.eyes[1].scale_y = 0.8
 
-    def _blink(self):
+    def blink(self):
         """Generate blink animation."""
 
         # Create blink face at the position of the current face.
@@ -655,17 +654,10 @@ class ProceduralFaceGenerator:
         target_face.eyes[0].scale_y = self.BLINK_SCALE_Y
         target_face.eyes[1].scale_y = self.BLINK_SCALE_Y
 
-        for from_face, to_face in (
-            (self.current_face, target_face),
-            (target_face, self.current_face),
-        ):
-            face_generator = interpolate(from_face, to_face, self.BLINK_STEPS)
+        part1 = interpolate(self.current_face, target_face, self.BLINK_STEPS)
+        part2 = interpolate(target_face, self.current_face, self.BLINK_STEPS)
 
-            for face in face_generator:
-                im = face.render().convert("RGB")
-                np_im = np.array(im)
-                k = cv2.waitKey(1) & 0xFF
-                cv2.imshow("all EYEZ on you", np_im)
+        return chain(part1, part2)
 
     def __iter__(self):
         """Generate eye animation."""
@@ -719,4 +711,4 @@ class ProceduralFaceGenerator:
 
             # Random blink
             if random.randint(0, self.BLINK_FREQUENCY) == 0:
-                yield from self._blink()
+                yield from self.blink()
