@@ -9,36 +9,18 @@ https://git.brl.ac.uk/ca2-chambers/expressive-eyes
 
 from typing import Optional, List
 
-from procedural_face import ProceduralFace, DEFAULT_WIDTH, DEFAULT_HEIGHT
+from .procedural_face import ProceduralFace, DEFAULT_WIDTH, DEFAULT_HEIGHT
 
 
-__all__ = [
-    "Neutral",
-    "Anger",
-    "Sadness",
-    "Happiness",
-    "Surprise",
-    "Disgust",
-    "Fear",
-    "Pleading",
-    "Vulnerability",
-    "Despair",
-    "Guilt",
-    "Disappointment",
-    "Embarrassment",
-    "Horror",
-    "Skepticism",
-    "Annoyance",
-    "Fury",
-    "Suspicion",
-    "Rejection",
-    "Boredom",
-    "Tiredness",
-    "Asleep",
-    "Confusion",
-    "Amazement",
-    "Excitement",
-]
+def get(name):
+    """Returns an instance of a face expression.
+
+    for example: expression = get("Happiness")
+    """
+    import sys
+
+    current_module = sys.modules[__name__]
+    return getattr(current_module, name)()
 
 
 class Neutral(ProceduralFace):
