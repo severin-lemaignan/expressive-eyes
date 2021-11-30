@@ -77,13 +77,8 @@ def get_valence_arousal(valence=0.0, arousal=0.0):
 
 
 class Neutral(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].scale_x = 0.8
         self.eyes[0].scale_y = 0.8
         self.eyes[1].scale_x = 0.8
@@ -94,13 +89,8 @@ class Neutral(ProceduralFace):
 
 
 class Anger(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].y = 0.6
         self.eyes[0].lids[0].angle = -30.0
         self.eyes[1].lids[0].y = 0.6
@@ -108,13 +98,8 @@ class Anger(ProceduralFace):
 
 
 class Sadness(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].y = 0.6
         self.eyes[0].lids[0].angle = 20.0
         self.eyes[1].lids[0].y = 0.6
@@ -122,13 +107,8 @@ class Sadness(ProceduralFace):
 
 
 class Happy(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].upper_outer_radius_x = 1.0
         self.eyes[0].upper_inner_radius_x = 1.0
         self.eyes[0].lids[1].y = 0.4
@@ -140,13 +120,8 @@ class Happy(ProceduralFace):
 
 
 class Surprise(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].scale_x = 1.25
         self.eyes[0].scale_y = 1.25
         self.eyes[1].scale_x = 1.25
@@ -154,13 +129,8 @@ class Surprise(ProceduralFace):
 
 
 class Disgust(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].y = 0.3
         self.eyes[0].lids[0].angle = 10.0
         self.eyes[0].lids[1].y = 0.3
@@ -171,13 +141,8 @@ class Disgust(ProceduralFace):
 
 
 class Fear(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = 30.0
         self.eyes[0].lids[0].bend = 0.1
         self.eyes[0].lids[1].y = 0.4
@@ -192,13 +157,8 @@ class Fear(ProceduralFace):
 
 
 class Pleading(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = 30.0
         self.eyes[0].lids[1].y = 0.5
         self.eyes[1].lids[0].angle = -30.0
@@ -206,13 +166,8 @@ class Pleading(ProceduralFace):
 
 
 class Vulnerability(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = 20.0
         self.eyes[0].lids[0].y = 0.3
         self.eyes[0].lids[1].angle = 10.0
@@ -224,13 +179,8 @@ class Vulnerability(ProceduralFace):
 
 
 class Despair(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = 30.0
         self.eyes[0].lids[0].y = 0.6
         self.eyes[1].lids[0].angle = -30.0
@@ -238,13 +188,8 @@ class Despair(ProceduralFace):
 
 
 class Guilt(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = 10.0
         self.eyes[0].lids[0].y = 0.6
         self.eyes[0].lids[0].bend = 0.3
@@ -254,13 +199,8 @@ class Guilt(ProceduralFace):
 
 
 class Disappointment(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = -10.0
         self.eyes[0].lids[0].y = 0.3
         self.eyes[0].lids[1].y = 0.4
@@ -270,13 +210,8 @@ class Disappointment(ProceduralFace):
 
 
 class Embarrassment(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = 10.0
         self.eyes[0].lids[0].y = 0.5
         self.eyes[0].lids[0].bend = 0.1
@@ -291,13 +226,8 @@ class Embarrassment(ProceduralFace):
 
 
 class Horror(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = 20.0
         self.eyes[1].lids[0].angle = -20.0
 
@@ -306,13 +236,8 @@ class Horror(ProceduralFace):
 
 
 class Skepticism(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = -10.0
         self.eyes[0].lids[0].y = 0.4
         self.eyes[1].lids[0].angle = 25.0
@@ -320,13 +245,8 @@ class Skepticism(ProceduralFace):
 
 
 class Annoyance(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = -30.0
         self.eyes[0].lids[1].angle = -10.0
         self.eyes[0].lids[1].y = 0.3
@@ -341,13 +261,8 @@ class Annoyance(ProceduralFace):
 class Fury(ProceduralFace):
     """aka "enragement"."""
 
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = -30.0
         self.eyes[0].lids[0].y = 0.3
         self.eyes[0].lids[1].y = 0.4
@@ -357,13 +272,8 @@ class Fury(ProceduralFace):
 
 
 class Suspicion(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = -10.0
         self.eyes[0].lids[0].y = 0.4
         self.eyes[0].lids[1].y = 0.5
@@ -373,13 +283,8 @@ class Suspicion(ProceduralFace):
 
 
 class Rejection(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = 25.0
         self.eyes[0].lids[0].y = 0.8
         self.eyes[1].lids[0].angle = 25.0
@@ -390,25 +295,15 @@ class Rejection(ProceduralFace):
 
 
 class Boredom(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].y = 0.4
         self.eyes[1].lids[0].y = 0.4
 
 
 class Tired(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[0].angle = 5.0
         self.eyes[0].lids[0].y = 0.4
         self.eyes[0].lids[1].y = 0.5
@@ -418,13 +313,8 @@ class Tired(ProceduralFace):
 
 
 class Asleep(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].center_y = 50.0
         self.eyes[0].lids[0].y = 0.45
         self.eyes[0].lids[1].y = 0.5
@@ -437,13 +327,8 @@ class Asleep(ProceduralFace):
 
 
 class Confused(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[1].y = 0.2
         self.eyes[0].lids[1].bend = 0.2
         self.eyes[1].lids[0].angle = -10.0
@@ -454,25 +339,15 @@ class Confused(ProceduralFace):
 
 
 class Amazed(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[1].y = 0.2
         self.eyes[1].lids[1].y = 0.2
 
 
 class Excited(ProceduralFace):
-    def __init__(
-        self,
-        params: Optional[List[float]] = None,
-        width: int = DEFAULT_WIDTH,
-        height: int = DEFAULT_HEIGHT,
-    ):
-        super().__init__(params, width, height)
+    def __init__(self):
+        super().__init__()
         self.eyes[0].lids[1].y = 0.3
         self.eyes[0].lids[1].bend = 0.2
         self.eyes[1].lids[1].y = 0.3
