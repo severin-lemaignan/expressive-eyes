@@ -32,11 +32,11 @@ class FaceManager:
         idx = 0
         for face in self.face_generator:
             if idx == nb_frames:
+                self.current_expression = face
                 break
             idx += 1
 
         if idx < nb_frames:  # we are at the end of the interpolation
             self.current_expression = self.next_expression
-            return self.current_expression
 
-        return face
+        return self.current_expression
