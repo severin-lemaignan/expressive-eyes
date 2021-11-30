@@ -1,49 +1,40 @@
-# Expressive Eyes
+# Interactive Expressive Eyes
 
+![expressions](https://user-images.githubusercontent.com/51151059/132763601-ae5e1f1b-7563-46aa-b82b-4d0e52f4f538.gif)
 
-![24 images of different expressive eyes](https://git.brl.ac.uk/ca2-chambers/expressive-eyes/raw/524a6cc95a393120c11053bedd9a0a74a6e1a2f7/doc/Face_Images/All_faces_no_colour.png)
+Using OpenFace, ROS, and Pyhon combination, the eyes can instantly imitate the expressions of a person. They also do eye tracking and follow the eye movements (not pupil movements, individual eye movements).
 
+## Video Presentation of the project
 
-## Requirements
+https://www.youtube.com/watch?v=GiftcBs3MwY
 
+## Requirements of the project (in order)
 
-- Python 3.8.3
+- Python 3.8+
 - numpy
 - scipy
-- pycozmo (see below)
+- pycozmo (https://github.com/zayfod/pycozmo)
+- OpenFace (https://github.com/TadasBaltrusaitis/OpenFace) 
+- ROS (noetic)
+- openface2_ros (https://github.com/ditoec/openface2_ros)
 
-- **Install the requirements for pycozmo:**
-- [Pillow 6.0.0](https://github.com/python-pillow/Pillow) - Python image library
-- [FlatBuffers](https://github.com/google/flatbuffers) - serialization library
-- [dpkt](https://github.com/kbandla/dpkt) - TCP/IP packet parsing library
+## Clone
 
-Install my copy of pycozmo (do not use pip install pycozmo):
-- `git clone https://git.brl.ac.uk/ca2-chambers/pycozmo`
-- `cd pycozmo`
-- `python3 setup.py install --user`
+- git clone https://github.com/bahadirbk/Interactive_Expressive_Eyes.git
 
+## Details
 
-## To install/use on a Linux machine
+In order to manage to install and run without having an issue, the opencv version 4 and OpenFace version 2.2 need to be installed. Afterwards, the line related to the opencv version of the CMakeLists.txt file in the openface2_ros node needs to be reconfigured as it would work with opencv version 4 as well. Make sure that the following line is in the CMakeLists.txt file 'find_package(OpenCV 4 REQUIRED COMPONENTS core objdetect)'. Also, in openface2_ros.cpp and openface2_ros_single.cpp files, the line 'include <tbb/tbb.h>' needs to be commented out, Lastly, in openface2_ros.cpp file, the line 'vector<tbb::atomic<bool> > face_detections_used(face_detections.size());' needs to be changed as it will be 'vector<bool> face_detections_used(face_detections.size());' as well before catkin_make. 
 
+## Running
 
-- Install from source:
-- `git clone https://git.brl.ac.uk/ca2-chambers/expressive-eyes`
-- `cd expressive-eyes`
-- `python3 setup.py install --user`
+Running the code (in order):
 
-- Run demo file:
-- `cd examples`
-- `python3 demo.py`
+- roscore
+- rosrun usb_cam usb_cam_node
+- roslaunch openface2_ros openface2_ros.launch
+- python_subscriber.py
 
 
-## To install/use on the Jolla phone
 
-- SSH on the phone
-- `cd /media/sdcard/7318-A0DD/src/expressive-eyes` (clone the repo first if needed)
-- `git pull`
-- `python3 setup.py install --user`
 
-The first time, you need to install the app to make it accessible from the shell:
-- `ln -s /media/sdcard/7318-A0DD/src/expressive-eyes /usr/share/expressive_eyes`
-- `cp qml/expressive-eyes.desktop /usr/share/applications/`
-- `cp qml/expressive_eyes.png /usr/share/icons/hicolor/86x86/apps/`
